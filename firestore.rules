@@ -1,0 +1,45 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función auxiliar para verificar si el usuario está autenticado y tiene rol de ADMIN
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.admin == true ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN'
+      );
+    }
+
+    // Reglas para la colección de Cursos
+    match /courses/{courseId} {
+      // Lectura pública para cualquier visitante
+      allow read: if true;
+      
+      // Escritura, actualización y eliminación restringidas exclusivamente al Administrador
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Reglas para la colección de Usuarios / Roles
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Reglas para la colección de Noticias / Blog
+    match /posts/{postId} {
+      // Lectura pública permitida para todos
+      allow read: if true;
+      
+      // Creación, modificación y eliminación restringidas a administradores
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Reglas para la colección de Testimonios
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

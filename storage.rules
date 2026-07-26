@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Función auxiliar para verificar si el usuario es Administrador autenticado
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Reglas para imágenes de cursos en /courses/{allPaths=**}
+    match /courses/{imageId} {
+      // Lectura pública permitida para que cualquier visitante vea las imágenes de los cursos
+      allow read: if true;
+      
+      // Subida, actualización y eliminación restringidas exclusivamente al Administrador
+      allow write, delete: if isAdmin()
+                           && request.resource.size < 5 * 1024 * 1024 // Tamaño máximo 5MB
+                           && request.resource.contentType.matches('image/.*'); // Solo archivos de imagen
+    }
+
+    // Reglas para imágenes de noticias / blog en /posts/{imageId}
+    match /posts/{imageId} {
+      allow read: if true;
+      allow write, delete: if isAdmin()
+                           && request.resource.size < 5 * 1024 * 1024
+                           && request.resource.contentType.matches('image/.*');
+    }
+
+    // Reglas para fotos / avatares de testimonios en /testimonials/{imageId}
+    match /testimonials/{imageId} {
+      allow read: if true;
+      allow write, delete: if isAdmin()
+                           && request.resource.size < 5 * 1024 * 1024
+                           && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

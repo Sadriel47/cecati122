@@ -1,0 +1,58 @@
+# Logs y depuracion
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencias y archivos de compilacion
+node_modules
+dist
+dist-ssr
+build
+.tmp
+.cache
+.vite
+
+# Archivos de Variables de Entorno (CRITICO DE SEGURIDAD)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+*.env
+
+# Credenciales de Servicio y Llaves Privadas (CRITICO DE SEGURIDAD)
+serviceAccountKey.json
+*serviceAccount*.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets.json
+credentials.json
+
+# Archivos de Editores e IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Archivos del Sistema Operativo
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Directorios de Inteligencia Artificial y Agentes
+.gemini
+.antigravity
+.agents
