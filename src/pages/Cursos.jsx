@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getCourses } from '../services/db';
 import { createPreRegistration } from '../services/registrationService';
 
 export default function Cursos() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [category, setCategory] = useState('todos');
@@ -18,6 +20,7 @@ export default function Cursos() {
 
   useEffect(() => {
     document.title = "Cursos - CECATI 122";
+    window.scrollTo(0, 0);
     const fetchCourses = async () => {
       try {
         const data = await getCourses();
@@ -33,6 +36,20 @@ export default function Cursos() {
   }, []);
 
   useEffect(() => {
+    if (courses.length > 0) {
+      const courseIdParam = searchParams.get('id') || searchParams.get('curso');
+      if (courseIdParam) {
+        const found = courses.find(c => String(c.id) === String(courseIdParam));
+        if (found) {
+          setSelectedCourse(found);
+          setActiveTab('overview');
+          setRegisterSuccess(false);
+        }
+      }
+    }
+  }, [courses, searchParams]);
+
+  useEffect(() => {
     if (category === 'todos') {
       setFilteredCourses(courses);
     } else {
@@ -44,6 +61,14 @@ export default function Cursos() {
     setSelectedCourse(course);
     setActiveTab('overview');
     setRegisterSuccess(false);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCourse(null);
+    setRegisterSuccess(false);
+    if (searchParams.get('id') || searchParams.get('curso')) {
+      setSearchParams({}, { replace: true });
+    }
   };
 
   const handleRegisterSubmit = async (e) => {
@@ -250,8 +275,8 @@ export default function Cursos() {
 
       {/*==================== MODAL DE DETALLES (z-[100] ELEVADO SOBRE EL HEADER) ====================*/}
       {selectedCourse && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in">
-          <div className="relative w-full max-w-5xl bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col max-h-[92vh] my-auto">
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in" onClick={handleCloseModal}>
+          <div className="relative w-full max-w-5xl bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col max-h-[92vh] my-auto" onClick={(e) => e.stopPropagation()}>
             
             {/* Header Limpio con Imagen */}
             <div className="relative h-44 sm:h-52 overflow-hidden shrink-0">
@@ -264,7 +289,7 @@ export default function Cursos() {
 
               {/* Botón de Cierre Garantizado por encima */}
               <button 
-                onClick={() => { setSelectedCourse(null); setRegisterSuccess(false); }}
+                onClick={handleCloseModal}
                 className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-black/60 hover:bg-red-600 text-white backdrop-blur-md transition-colors flex items-center justify-center text-xl cursor-pointer shadow-xl border border-white/20"
                 aria-label="Cerrar modal"
               >
