@@ -118,6 +118,32 @@ Actualmente, su taller brinda empleo a tres familias de la comunidad y comercial
 ];
 
 /**
+ * Inserta las noticias por defecto en la colección Firestore.
+ * @returns {Promise<Array<Object>>}
+ */
+export async function seedDefaultPostsToFirestore() {
+  if (!db) return defaultPosts;
+  try {
+    const seeded = [];
+    for (const post of defaultPosts) {
+      const docRef = doc(db, POSTS_COLLECTION, post.id);
+      const payload = {
+        ...post,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      await setDoc(docRef, payload, { merge: true });
+      seeded.push(payload);
+    }
+    console.log("Noticias de ejemplo insertadas exitosamente en Firestore.");
+    return seeded;
+  } catch (err) {
+    console.error("Error al sembrar noticias en Firestore:", err);
+    return defaultPosts;
+  }
+}
+
+/**
  * Sube la imagen de una noticia a Firebase Storage
  */
 export async function uploadPostImage(file) {
@@ -156,7 +182,7 @@ export async function deletePostImage(storagePathOrUrl) {
  */
 export async function getPosts(category = 'Todas', searchTerm = '') {
   try {
-    if (!db) return filterPostsLocally(defaultPosts, category, searchTerm, true);
+    if (!db) return [];
 
     const postsRef = collection(db, POSTS_COLLECTION);
     const querySnapshot = await getDocs(postsRef);
@@ -166,14 +192,10 @@ export async function getPosts(category = 'Todas', searchTerm = '') {
       posts.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    if (posts.length === 0) {
-      posts = defaultPosts;
-    }
-
     return filterPostsLocally(posts, category, searchTerm, true);
   } catch (error) {
-    console.warn("Error obteniendo noticias de Firestore, usando respaldo:", error);
-    return filterPostsLocally(defaultPosts, category, searchTerm, true);
+    console.warn("Error obteniendo noticias de Firestore:", error);
+    return [];
   }
 }
 
@@ -182,7 +204,7 @@ export async function getPosts(category = 'Todas', searchTerm = '') {
  */
 export async function getAllPostsAdmin() {
   try {
-    if (!db) return defaultPosts;
+    if (!db) return [];
 
     const postsRef = collection(db, POSTS_COLLECTION);
     const querySnapshot = await getDocs(postsRef);
@@ -191,10 +213,6 @@ export async function getAllPostsAdmin() {
     querySnapshot.forEach((docSnap) => {
       posts.push({ id: docSnap.id, ...docSnap.data() });
     });
-
-    if (posts.length === 0) {
-      posts = defaultPosts;
-    }
 
     // Ordenar: fijadas primero, luego por fecha descendente
     return posts.sort((a, b) => {

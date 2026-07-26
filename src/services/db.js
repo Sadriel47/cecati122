@@ -3,9 +3,7 @@ import {
   getCourses as fetchCoursesFromFirestore, 
   getCourseCount as fetchCountFromFirestore,
   saveCourse as saveCourseToFirestore, 
-  deleteCourse as removeCourseFromFirestore,
-  seedDefaultCoursesToFirestore,
-  defaultCourses
+  deleteCourse as removeCourseFromFirestore
 } from './coursesService';
 
 export const checkFirebaseStatus = () => !!db;
@@ -13,20 +11,10 @@ export const getFirebaseAuth = () => auth;
 
 export const getCourses = async (category = 'todos') => {
   try {
-    const data = await fetchCoursesFromFirestore(category);
-    if (data && data.length > 0) return data;
-    if (db) {
-      const seeded = await seedDefaultCoursesToFirestore();
-      if (seeded && seeded.length > 0) {
-        return category && category !== 'todos'
-          ? seeded.filter(c => c.category === category)
-          : seeded;
-      }
-    }
-    return defaultCourses;
+    return await fetchCoursesFromFirestore(category);
   } catch (err) {
-    console.warn("Conectando con almacenamiento local:", err);
-    return defaultCourses;
+    console.warn("Error al obtener cursos:", err);
+    return [];
   }
 };
 
@@ -35,7 +23,7 @@ export const getCourseCount = async () => {
     return await fetchCountFromFirestore();
   } catch (err) {
     const cached = localStorage.getItem('cecati_course_count');
-    return cached ? parseInt(cached, 10) : defaultCourses.length;
+    return cached ? parseInt(cached, 10) : 0;
   }
 };
 
@@ -54,7 +42,8 @@ export {
   getPostByIdOrSlug, 
   savePost, 
   deletePost, 
-  togglePostStatus 
+  togglePostStatus,
+  seedDefaultPostsToFirestore
 } from './postsService';
 
 // Re-exportación de Servicios de Testimonios
@@ -63,7 +52,8 @@ export {
   getAllTestimonialsAdmin,
   saveTestimonial,
   deleteTestimonial,
-  toggleTestimonialStatus
+  toggleTestimonialStatus,
+  seedDefaultTestimonialsToFirestore
 } from './testimonialsService';
 
 // Re-exportación de Servicio de Monitoreo de Almacenamiento

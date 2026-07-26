@@ -56,6 +56,32 @@ export const defaultTestimonials = [
 ];
 
 /**
+ * Inserta los testimonios por defecto en la colección Firestore.
+ * @returns {Promise<Array<Object>>}
+ */
+export async function seedDefaultTestimonialsToFirestore() {
+  if (!db) return defaultTestimonials;
+  try {
+    const seeded = [];
+    for (const item of defaultTestimonials) {
+      const docRef = doc(db, TESTIMONIALS_COLLECTION, item.id);
+      const payload = {
+        ...item,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      await setDoc(docRef, payload, { merge: true });
+      seeded.push(payload);
+    }
+    console.log("Testimonios de ejemplo insertados exitosamente en Firestore.");
+    return seeded;
+  } catch (err) {
+    console.error("Error al sembrar testimonios en Firestore:", err);
+    return defaultTestimonials;
+  }
+}
+
+/**
  * Sube la foto/avatar de un estudiante a Firebase Storage
  */
 export async function uploadTestimonialAvatar(file) {
@@ -94,7 +120,7 @@ export async function deleteTestimonialAvatar(storagePathOrUrl) {
  */
 export async function getTestimonials() {
   try {
-    if (!db) return defaultTestimonials.filter(t => t.status === 'published');
+    if (!db) return [];
 
     const colRef = collection(db, TESTIMONIALS_COLLECTION);
     const querySnapshot = await getDocs(colRef);
@@ -104,14 +130,10 @@ export async function getTestimonials() {
       testimonials.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    if (testimonials.length === 0) {
-      testimonials = defaultTestimonials;
-    }
-
     return testimonials.filter(t => t.status === 'published');
   } catch (error) {
-    console.warn("Error al cargar testimonios de Firestore, usando respaldo:", error);
-    return defaultTestimonials.filter(t => t.status === 'published');
+    console.warn("Error al cargar testimonios de Firestore:", error);
+    return [];
   }
 }
 
@@ -120,7 +142,7 @@ export async function getTestimonials() {
  */
 export async function getAllTestimonialsAdmin() {
   try {
-    if (!db) return defaultTestimonials;
+    if (!db) return [];
 
     const colRef = collection(db, TESTIMONIALS_COLLECTION);
     const querySnapshot = await getDocs(colRef);
@@ -130,14 +152,10 @@ export async function getAllTestimonialsAdmin() {
       testimonials.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    if (testimonials.length === 0) {
-      testimonials = defaultTestimonials;
-    }
-
     return testimonials;
   } catch (error) {
     console.warn("Error al cargar testimonios para admin:", error);
-    return defaultTestimonials;
+    return [];
   }
 }
 

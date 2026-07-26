@@ -148,7 +148,6 @@ export async function deleteCourseImage(storagePathOrUrl) {
 
 /**
  * Obteins all courses from Firestore, optionally filtered by category.
- * If empty in Firestore, automatically seeds default courses.
  * @param {string} [category] - Optional category filter
  * @returns {Promise<Array<Object>>}
  */
@@ -169,11 +168,6 @@ export async function getCourses(category = 'todos') {
       courses.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    // Si la base de datos en Firestore está vacía, sembrar automáticamente los cursos iniciales
-    if (courses.length === 0 && (!category || category === 'todos')) {
-      return await seedDefaultCoursesToFirestore();
-    }
-
     // Actualizar caché de conteo total si consultó todos
     if (!category || category === 'todos') {
       localStorage.setItem('cecati_course_count', courses.length.toString());
@@ -182,7 +176,7 @@ export async function getCourses(category = 'todos') {
     return courses;
   } catch (error) {
     console.error("Error al obtener cursos desde Firestore:", error);
-    throw error;
+    return [];
   }
 }
 

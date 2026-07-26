@@ -3,6 +3,7 @@ import {
   addDoc, 
   getDocs, 
   doc, 
+  setDoc,
   updateDoc, 
   query, 
   orderBy, 
@@ -11,6 +12,66 @@ import {
 import { db } from '../firebase/config';
 
 const REGISTRATIONS_COLLECTION = 'preRegistrations';
+
+// Ejemplos por defecto para solicitudes de pre-registro iniciales
+export const defaultRegistrations = [
+  {
+    id: "reg_alejandro_morales",
+    fullName: "Alejandro Morales Mendoza",
+    phone: "4421234567",
+    email: "alejandro.morales@gmail.com",
+    courseId: "informatica",
+    courseTitle: "Informática",
+    status: "PENDIENTE",
+    createdAt: "2026-07-24T14:30:00Z"
+  },
+  {
+    id: "reg_sofia_ramirez",
+    fullName: "Sofía Ramírez Castro",
+    phone: "4429876543",
+    email: "sofia.ramirez@hotmail.com",
+    courseId: "confeccion",
+    courseTitle: "Confección y Preformado de Prendas",
+    status: "CONTACTADO",
+    createdAt: "2026-07-25T10:15:00Z"
+  },
+  {
+    id: "reg_fernando_torres",
+    fullName: "Fernando Torres Gutiérrez",
+    phone: "4425558899",
+    email: "fernando.torres@outlook.com",
+    courseId: "informatica",
+    courseTitle: "Informática",
+    status: "INSCRITO",
+    createdAt: "2026-07-25T16:45:00Z"
+  }
+];
+
+/**
+ * Inserta los registros de ejemplo en la colección Firestore.
+ * @returns {Promise<Array<Object>>}
+ */
+export async function seedDefaultRegistrationsToFirestore() {
+  if (!db) return defaultRegistrations;
+  try {
+    const seeded = [];
+    for (const reg of defaultRegistrations) {
+      const docRef = doc(db, REGISTRATIONS_COLLECTION, reg.id);
+      const payload = {
+        ...reg,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      await setDoc(docRef, payload, { merge: true });
+      seeded.push(payload);
+    }
+    console.log("Pre-registros de ejemplo insertados exitosamente en Firestore.");
+    return seeded;
+  } catch (err) {
+    console.error("Error al sembrar pre-registros en Firestore:", err);
+    return defaultRegistrations;
+  }
+}
 
 /**
  * Registra una solicitud de pre-inscripción de un alumno en Firestore.
@@ -48,7 +109,7 @@ export async function createPreRegistration(registrationData) {
 }
 
 /**
- * Obtiene todas las solicitudes de pre-registro para el panel administrativo.
+ * Obtiene todas las solicitudes de pre-registro para el panel administrativo desde Firestore.
  * @returns {Promise<Array<Object>>}
  */
 export async function getPreRegistrations() {
@@ -60,14 +121,9 @@ export async function getPreRegistrations() {
       registrations.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    if (registrations.length === 0) {
-      const local = JSON.parse(localStorage.getItem('cecati_preregistrations') || '[]');
-      return local;
-    }
-
     return registrations;
   } catch (error) {
-    console.warn("Obteniendo pre-registros locales:", error);
+    console.warn("Error al obtener pre-registros de Firestore:", error);
     const local = JSON.parse(localStorage.getItem('cecati_preregistrations') || '[]');
     return local;
   }

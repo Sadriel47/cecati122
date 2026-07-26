@@ -5,22 +5,24 @@ import {
   deleteCourse, 
   checkFirebaseStatus, 
   getFirebaseAuth,
-  calculateStorageUsage,
-  seedDefaultCoursesToFirestore
+  calculateStorageUsage
 } from '../services/db';
-import { getPreRegistrations, updateRegistrationStatus } from '../services/registrationService';
+import { 
+  getPreRegistrations, 
+  updateRegistrationStatus
+} from '../services/registrationService';
 import { 
   getAllPostsAdmin, 
   savePost as savePostToDb, 
   deletePost as deletePostFromDb, 
-  togglePostStatus 
-} from '../services/postsService';
+  togglePostStatus
+} from '../services/db';
 import { 
   getAllTestimonialsAdmin, 
   saveTestimonial as saveTestimonialToDb, 
   deleteTestimonial as deleteTestimonialFromDb, 
-  toggleTestimonialStatus 
-} from '../services/testimonialsService';
+  toggleTestimonialStatus
+} from '../services/db';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
 
@@ -531,23 +533,6 @@ export default function Admin() {
     }
   };
 
-  const [seedingCourses, setSeedingCourses] = useState(false);
-
-  const handleSeedCourses = async () => {
-    setSeedingCourses(true);
-    try {
-      await seedDefaultCoursesToFirestore();
-      showToast("Cursos iniciales insertados y sincronizados en la base de datos Firestore.");
-      await fetchCourses();
-      fetchStorageInfo();
-    } catch (err) {
-      console.error("Error al sembrar cursos:", err);
-      showToast("Error al sembrar los cursos iniciales.", "error");
-    } finally {
-      setSeedingCourses(false);
-    }
-  };
-
   const handleDelete = async (id, title) => {
     if (window.confirm(`¿Estás seguro de que deseas eliminar el curso "${title}"?`)) {
       try {
@@ -881,25 +866,6 @@ export default function Admin() {
                   />
                   <i className="ri-search-line absolute left-3.5 top-3 text-gray-400 text-base"></i>
                 </div>
-
-                <button
-                  onClick={handleSeedCourses}
-                  disabled={seedingCourses}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold text-xs hover:bg-blue-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
-                  title="Inserta los cursos iniciales directamente en la base de datos de Firestore"
-                >
-                  {seedingCourses ? (
-                    <>
-                      <i className="ri-loader-4-line ri-spin text-sm"></i>
-                      <span>Insertando Cursos...</span>
-                    </>
-                  ) : (
-                    <>
-                      <i className="ri-database-2-line text-sm"></i>
-                      <span>Sincronizar Cursos en Firestore</span>
-                    </>
-                  )}
-                </button>
               </div>
             </div>
 
@@ -973,16 +939,24 @@ export default function Admin() {
         {/* TAB 2: SOLICITUDES DE PRE-REGISTRO */}
         {adminTab === 'registrations' && (
           <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-extrabold text-gray-900 dark:text-white">
-                Aspirantes y Solicitudes de Pre-registro
-              </h3>
-              <button 
-                onClick={fetchRegistrations}
-                className="px-3.5 py-1.5 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
-              >
-                <i className="ri-refresh-line"></i> Actualizar
-              </button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-extrabold text-gray-900 dark:text-white">
+                  Aspirantes y Solicitudes de Pre-registro
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Gestiona el estatus de las solicitudes enviadas por los alumnos desde la página web.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={fetchRegistrations}
+                  className="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  <i className="ri-refresh-line text-sm"></i> Actualizar
+                </button>
+              </div>
             </div>
 
             {loadingRegs ? (
@@ -1065,12 +1039,14 @@ export default function Admin() {
                 </p>
               </div>
 
-              <button
-                onClick={() => openPostModal()}
-                className="px-5 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <i className="ri-add-line text-base"></i> Redactar Nueva Noticia
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openPostModal()}
+                  className="px-5 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  <i className="ri-add-line text-base"></i> Redactar Nueva Noticia
+                </button>
+              </div>
             </div>
 
             {loadingPosts ? (
@@ -1178,12 +1154,14 @@ export default function Admin() {
                 </p>
               </div>
 
-              <button
-                onClick={() => openTestimonialModal()}
-                className="px-5 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
-              >
-                <i className="ri-add-line text-base"></i> Agregar Testimonio
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openTestimonialModal()}
+                  className="px-5 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                >
+                  <i className="ri-add-line text-base"></i> Agregar Testimonio
+                </button>
+              </div>
             </div>
 
             {loadingTestimonials ? (
