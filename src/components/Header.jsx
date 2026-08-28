@@ -75,14 +75,14 @@ export default function Header() {
   };
 
   return (
-    <header className={`header ${isScrolled ? 'bg-header' : ''}`} id="header">
-      <nav className="nav container">
+    <header className={`header ${isScrolled ? 'bg-header' : ''} relative z-50`} id="header">
+      <nav className="nav flex items-center justify-between w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link to="/" className="nav__logo" onClick={closeMenu}>
           <img src="/assets/img/logo-cecati.webp" alt="Logo CECATI 122" />
         </Link>
 
-        <div className={`nav__menu ${showMenu ? 'show-menu' : ''}`} id="nav-menu">
-          <ul className="nav__list">
+        <div className={`nav__menu ${showMenu ? 'absolute top-full left-4 right-4 mt-2 p-5 rounded-2xl bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col gap-4 z-50 md:hidden' : 'max-md:hidden'}`} id="nav-menu">
+          <ul className="nav__list md:flex md:items-center md:gap-6">
             <li>
               <Link 
                 to="/" 
@@ -135,13 +135,13 @@ export default function Header() {
             )}
           </ul>
 
-          {/* Close button */}
-          <div className="nav__close" id="nav-close" onClick={closeMenu}>
+          {/* Close button (Hidden as dropdown auto-closes) */}
+          <div className="nav__close hidden" id="nav-close" onClick={closeMenu}>
             <i className="ri-close-large-line"></i>
           </div>
         </div>
 
-        <div className="nav__buttons flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="nav__buttons flex items-center gap-2 shrink-0">
           {/* User Session Action / Logout */}
           {user && (
             <button
@@ -166,16 +166,16 @@ export default function Header() {
             <i className={`ri-${theme === 'dark' ? 'sun' : 'moon'}-fill nav__theme`}></i>
           </button>
 
-          {/* Toggle button (Menú Móvil Garantizado en Vertical y Horizontal) */}
+          {/* Toggle button (Menú Móvil) */}
           <button
             type="button"
-            className="nav__toggle"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-700 text-white hover:bg-rose-800 transition-colors shrink-0 md:hidden"
             id="nav-toggle"
-            onClick={() => setShowMenu(true)}
-            aria-label="Abrir menú de navegación"
-            title="Abrir Menú"
+            onClick={() => setShowMenu(!showMenu)}
+            aria-label="Alternar menú de navegación"
+            title="Alternar Menú"
           >
-            <i className="ri-menu-line text-xl"></i>
+            <i className={`ri-${showMenu ? 'close-line' : 'menu-line'} text-xl`}></i>
           </button>
         </div>
       </nav>
