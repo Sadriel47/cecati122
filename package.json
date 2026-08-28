@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "seed:admin": "node scripts/seed-admin.js"
+    "seed:admin": "node scripts/seed-admin.js",
+    "seed:courses": "node scripts/seed-courses.js"
   },
   "dependencies": {
     "firebase": "^12.15.0",

@@ -1,107 +1,29 @@
-import { 
-  collection, 
-  getDocs, 
-  getDoc, 
-  doc, 
-  addDoc, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  serverTimestamp 
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  serverTimestamp
 } from 'firebase/firestore';
-import { 
-  ref, 
-  uploadBytes, 
-  getDownloadURL, 
-  deleteObject 
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
 } from 'firebase/storage';
 import { db, storage } from '../firebase/config';
 
 const COURSES_COLLECTION = 'courses';
 
-// Cursos iniciales semilla para sincronización directa en Firestore
-export const defaultCourses = [
-  {
-    id: "informatica",
-    title: "Informática",
-    category: "tecnologia",
-    duration: 240,
-    startDate: "15/ENE/2025",
-    schedule: "8:00 AM - 2:00 PM",
-    requirements: "CURP y acta de nacimiento",
-    price: "$1,200 MXN",
-    image: "/assets/img/curso-img-1.jpg",
-    syllabus: [
-      "Sistemas operativos y hardware",
-      "Procesadores de texto avanzados",
-      "Hojas de cálculo y análisis de datos",
-      "Presentaciones profesionales",
-      "Bases de datos básicas",
-      "Internet y redes sociales",
-      "Seguridad informática"
-    ],
-    profile: "Al finalizar el curso, el alumno será capaz de utilizar eficientemente las herramientas informáticas básicas, crear documentos profesionales, manejar hojas de cálculo, realizar presentaciones y navegar de forma segura en internet para actividades laborales y personales.",
-    payments: [
-      { date: "01/ENE/2025", title: "Inscripción", desc: "Registro de alumnos y entrega de documentación" },
-      { date: "15/ENE/2025", title: "1er Pago ($1,200 MXN)", desc: "Inicio de clases y entrega de accesos" },
-      { date: "15/MAR/2025", title: "2do Pago ($1,200 MXN)", desc: "Continuación y desarrollo de proyectos intermedios" },
-      { date: "15/MAY/2025", title: "3er Pago ($1,100 MXN)", desc: "Finalización, evaluación práctica y certificación" }
-    ]
-  },
-  {
-    id: "confeccion",
-    title: "Confección y Preformado de Prendas",
-    category: "textil",
-    duration: 280,
-    startDate: "01/SEP/2025",
-    schedule: "3:00 PM - 6:00 PM",
-    requirements: "CURP y acta de nacimiento",
-    price: "$3,800 MXN",
-    image: "/assets/img/curso-img-2.jpg",
-    syllabus: [
-      "Técnicas de acabados a mano",
-      "Máquina recta y overlock",
-      "Patronaje sobre medida y sobre talla",
-      "Transformación y preformado de prendas para dama",
-      "Confección de ropa para niña",
-      "Confección de falda y blusa para dama",
-      "Confección de pantalón de dama"
-    ],
-    profile: "El egresado será capaz de confeccionar prendas de vestir siguiendo patrones técnicos, aplicando diversas técnicas de costura y acabados de calidad profesional.",
-    payments: [
-      { date: "01/SEP/2025", title: "Inscripción", desc: "Registro de alumnos y documentación básica" },
-      { date: "24/OCT/2025", title: "1er Pago ($1,300 MXN)", desc: "Inicio de clases presenciales" }
-    ]
-  }
-];
+export const defaultCourses = [];
 
-/**
- * Inserta los cursos semilla por defecto en la colección Firestore.
- * @returns {Promise<Array<Object>>}
- */
 export async function seedDefaultCoursesToFirestore() {
-  if (!db) return defaultCourses;
-  try {
-    const seeded = [];
-    for (const course of defaultCourses) {
-      const docRef = doc(db, COURSES_COLLECTION, course.id);
-      const payload = {
-        ...course,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      };
-      await setDoc(docRef, payload, { merge: true });
-      seeded.push(payload);
-    }
-    console.log("Cursos iniciales insertados con éxito en Firestore.");
-    return seeded;
-  } catch (err) {
-    console.error("Error sembrando cursos en Firestore:", err);
-    return defaultCourses;
-  }
+  return [];
 }
 
 /**
@@ -111,7 +33,7 @@ export async function seedDefaultCoursesToFirestore() {
  */
 export async function uploadCourseImage(file) {
   if (!file) return { url: '', path: '' };
-  
+
   const timestamp = Date.now();
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
   const storagePath = `courses/${timestamp}_${cleanFileName}`;
@@ -127,7 +49,7 @@ export async function uploadCourseImage(file) {
 }
 
 /**
- * Deletes a course image from Firebase Storage using its download URL or Storage path.
+ * Deletes a course image from Firebase Storage.
  * @param {string} storagePathOrUrl 
  */
 export async function deleteCourseImage(storagePathOrUrl) {
@@ -147,8 +69,8 @@ export async function deleteCourseImage(storagePathOrUrl) {
 }
 
 /**
- * Obteins all courses from Firestore, optionally filtered by category.
- * @param {string} [category] - Optional category filter
+ * Obtiene todos los cursos desde Firestore, opcionalmente filtrados por categoría.
+ * @param {string} [category] - Filtro de categoría
  * @returns {Promise<Array<Object>>}
  */
 export async function getCourses(category = 'todos') {
@@ -168,7 +90,6 @@ export async function getCourses(category = 'todos') {
       courses.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    // Actualizar caché de conteo total si consultó todos
     if (!category || category === 'todos') {
       localStorage.setItem('cecati_course_count', courses.length.toString());
     }
@@ -181,28 +102,27 @@ export async function getCourses(category = 'todos') {
 }
 
 /**
- * Obtiene el total de cursos optimizado con caché local en localStorage.
- * Retorna inmediatamente el conteo guardado y actualiza en segundo plano.
+ * Obtiene el total de cursos desde la base de datos o caché.
  * @returns {Promise<number>}
  */
 export async function getCourseCount() {
   const cachedCount = localStorage.getItem('cecati_course_count');
-  
+
   try {
     const courses = await getCourses('todos');
     const total = courses.length;
     localStorage.setItem('cecati_course_count', total.toString());
     return total;
-  } catch (err) {
+  } catch {
     if (cachedCount) {
       return parseInt(cachedCount, 10);
     }
-    return 35; // Valor por defecto fallback
+    return 0;
   }
 }
 
 /**
- * Obteins a single course by its Firestore Document ID.
+ * Obtiene un curso específico por su ID.
  * @param {string} id 
  * @returns {Promise<Object|null>}
  */
@@ -216,36 +136,38 @@ export async function getCourseById(id) {
     }
     return null;
   } catch (error) {
-    console.error(`Error al obtener el curso ${id}:`, error);
-    throw error;
+    console.error("Error al obtener curso:", error);
+    return null;
   }
 }
 
 /**
- * Saves (Creates or Updates) a course document in Firestore.
- * Optionally uploads a new cover image file to Firebase Storage.
+ * Guarda (crea o actualiza) un curso en Firestore.
  * @param {Object} courseData 
- * @param {File} [imageFile] - Optional cover image file
+ * @param {File|null} [imageFile] 
  * @returns {Promise<Object>}
  */
 export async function saveCourse(courseData, imageFile = null) {
   try {
-    let finalImageUrl = courseData.image || '';
+    let imageUrl = courseData.image || '';
 
     if (imageFile) {
-      const uploadRes = await uploadCourseImage(imageFile);
-      finalImageUrl = uploadRes.url;
+      const uploadResult = await uploadCourseImage(imageFile);
+      imageUrl = uploadResult.url;
     }
 
     const payload = {
       title: courseData.title,
       category: courseData.category,
       duration: Number(courseData.duration) || 0,
-      startDate: courseData.startDate,
-      schedule: courseData.schedule,
-      requirements: courseData.requirements || 'CURP y acta de nacimiento',
-      price: courseData.price || '$1,200 MXN',
-      image: finalImageUrl || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80',
+      startDate: courseData.startDate || '',
+      endDate: courseData.endDate || '',
+      formattedPeriod: courseData.formattedPeriod || '',
+      schedules: courseData.schedules || [],
+      schedule: courseData.schedule || '',
+      requirements: courseData.requirements || '',
+      price: courseData.price || '$0 MXN',
+      image: imageUrl,
       profile: courseData.profile || '',
       syllabus: courseData.syllabus || [],
       payments: courseData.payments || [],
@@ -255,45 +177,34 @@ export async function saveCourse(courseData, imageFile = null) {
     if (courseData.id) {
       const docRef = doc(db, COURSES_COLLECTION, courseData.id);
       await updateDoc(docRef, payload);
-      
-      // Actualizar conteo de cursos
-      getCourses('todos').catch(() => {});
       return { id: courseData.id, ...payload };
     } else {
       payload.createdAt = serverTimestamp();
-      const customId = courseData.title.toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)+/g, "");
-
-      const customDocRef = doc(db, COURSES_COLLECTION, customId || `course_${Date.now()}`);
-      await setDoc(customDocRef, payload);
-
-      // Actualizar conteo de cursos en caché
-      getCourses('todos').catch(() => {});
-      return { id: customDocRef.id, ...payload };
+      const docRef = await addDoc(collection(db, COURSES_COLLECTION), payload);
+      return { id: docRef.id, ...payload };
     }
   } catch (error) {
-    console.error("Error al guardar el curso en Firestore:", error);
+    console.error("Error al guardar curso en Firestore:", error);
     throw error;
   }
 }
 
 /**
- * Deletes a course document from Firestore.
+ * Elimina un curso de Firestore.
  * @param {string} id 
- * @returns {Promise<boolean>}
+ * @param {string} [imageUrl] 
  */
-export async function deleteCourse(id) {
+export async function deleteCourse(id, imageUrl = null) {
   try {
+    if (imageUrl) {
+      await deleteCourseImage(imageUrl);
+    }
+
     const docRef = doc(db, COURSES_COLLECTION, id);
     await deleteDoc(docRef);
-
-    // Refrescar caché de conteo
-    getCourses('todos').catch(() => {});
     return true;
   } catch (error) {
-    console.error(`Error al eliminar el curso ${id}:`, error);
+    console.error("Error al eliminar curso de Firestore:", error);
     throw error;
   }
 }

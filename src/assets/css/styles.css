@@ -2485,3 +2485,14 @@ img {
         zoom: 1.4;
     }
 }
+
+/*=============== PERFORMANCE OPTIMIZATIONS ===============*/
+.cv-auto-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 420px;
+}
+
+.cv-auto-row {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 56px;
+}

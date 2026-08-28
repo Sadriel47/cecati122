@@ -21,7 +21,7 @@ export const getCourses = async (category = 'todos') => {
 export const getCourseCount = async () => {
   try {
     return await fetchCountFromFirestore();
-  } catch (err) {
+  } catch {
     const cached = localStorage.getItem('cecati_course_count');
     return cached ? parseInt(cached, 10) : 0;
   }
@@ -42,8 +42,7 @@ export {
   getPostByIdOrSlug, 
   savePost, 
   deletePost, 
-  togglePostStatus,
-  seedDefaultPostsToFirestore
+  togglePostStatus
 } from './postsService';
 
 // Re-exportación de Servicios de Testimonios
@@ -52,14 +51,8 @@ export {
   getAllTestimonialsAdmin,
   saveTestimonial,
   deleteTestimonial,
-  toggleTestimonialStatus,
-  seedDefaultTestimonialsToFirestore
+  toggleTestimonialStatus
 } from './testimonialsService';
 
 // Re-exportación de Servicio de Monitoreo de Almacenamiento
 export { calculateStorageUsage } from './storageUsageService';
-export { seedDefaultCoursesToFirestore } from './coursesService';
-
-
-
-

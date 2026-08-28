@@ -19,12 +19,12 @@ export default function Blog() {
   useEffect(() => {
     document.title = "Noticias y Avisos - CECATI 122";
     fetchPosts();
-  }, [selectedCategory, searchTerm]);
+  }, []);
 
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const data = await getPosts(selectedCategory, searchTerm);
+      const data = await getPosts();
       setPosts(data);
     } catch (err) {
       console.error("Error al cargar publicaciones:", err);
@@ -33,14 +33,33 @@ export default function Blog() {
     }
   };
 
-  // Separa la noticia fijada / destacada si existe y no hay búsqueda activa
-  const pinnedPost = (!searchTerm && selectedCategory === 'Todas') 
-    ? posts.find(p => p.pinned) 
+  const matchesCategory = (post) => {
+    if (!selectedCategory || selectedCategory === 'Todas' || selectedCategory.toLowerCase() === 'all') {
+      return true;
+    }
+    return (post.category?.toLowerCase() || '') === selectedCategory.toLowerCase();
+  };
+
+  const matchesSearch = (post) => {
+    const query = (searchTerm || '').trim().toLowerCase();
+    if (!query) return true;
+    return (
+      (post.title?.toLowerCase() || '').includes(query) ||
+      (post.content?.toLowerCase() || post.summary?.toLowerCase() || post.excerpt?.toLowerCase() || '').includes(query)
+    );
+  };
+
+  const filteredPosts = posts.filter(post => matchesCategory(post) && matchesSearch(post));
+
+  const hasSearch = Boolean(searchTerm && searchTerm.trim().length > 0);
+
+  const pinnedPost = (!hasSearch && (selectedCategory === 'Todas' || selectedCategory.toLowerCase() === 'all'))
+    ? filteredPosts.find(p => p.pinned)
     : null;
 
-  const regularPosts = pinnedPost 
-    ? posts.filter(p => p.id !== pinnedPost.id) 
-    : posts;
+  const regularPosts = pinnedPost
+    ? filteredPosts.filter(p => p.id !== pinnedPost.id)
+    : filteredPosts;
 
   const getCategoryBadgeClass = (category) => {
     switch (category) {
@@ -79,8 +98,9 @@ export default function Blog() {
           className="absolute inset-0 w-full h-full object-cover object-center" 
           onError={(e) => { e.target.style.display = 'none'; }}
         />
-        {/* Gradient Overlay */}
+        {/* Gradient Overlay con transición suave al fondo */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-gray-900 backdrop-blur-sm"></div>
+        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-b from-transparent to-gray-50 dark:to-gray-900 pointer-events-none"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 text-xs sm:text-sm font-semibold text-white shadow-lg">
@@ -101,17 +121,17 @@ export default function Blog() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Barra de Búsqueda y Filtros */}
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-10">
+        <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-4 mb-10">
           {/* Categorías */}
-          <div className="flex flex-wrap gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+          <div className="flex flex-wrap gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 whitespace-nowrap border ${
+                className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 whitespace-nowrap border cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-[#B41A47] text-white border-[#B41A47] shadow-lg shadow-[#B41A47]/30 scale-105'
-                    : 'bg-white dark:bg-[#161618] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-[#2A2A2E] hover:border-[#B41A47]/50'
+                    ? 'bg-rose-600 text-white border-rose-600 shadow-lg shadow-rose-950/40 scale-105'
+                    : 'bg-white dark:bg-[#161618] text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-[#2A2A2E] hover:border-rose-500/50'
                 }`}
               >
                 {cat}
@@ -120,7 +140,7 @@ export default function Blog() {
           </div>
 
           {/* Buscador */}
-          <div className="relative w-full md:w-80">
+          <div className="relative w-full md:w-80 shrink-0">
             <i className="ri-search-line absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
             <input
               type="text"
@@ -132,7 +152,7 @@ export default function Blog() {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs cursor-pointer"
               >
                 <i className="ri-close-circle-fill text-base"></i>
               </button>
@@ -268,14 +288,18 @@ export default function Blog() {
                   No se encontraron noticias
                 </h3>
                 <p className="text-slate-500 dark:text-slate-400 text-xs mb-6">
-                  No hay publicaciones que coincidan con la búsqueda "{searchTerm}" o la categoría elegida.
+                  {hasSearch
+                    ? `No hay publicaciones que coincidan con "${searchTerm.trim()}".`
+                    : selectedCategory !== 'Todas'
+                    ? 'No hay publicaciones en la categoría seleccionada.'
+                    : 'No hay publicaciones disponibles por el momento.'}
                 </p>
                 <button
                   onClick={() => {
                     setSelectedCategory('Todas');
                     setSearchTerm('');
                   }}
-                  className="px-5 py-2.5 rounded-full bg-[#B41A47] text-white text-xs font-bold hover:bg-[#d62828] transition-colors shadow-md"
+                  className="px-5 py-2.5 rounded-full bg-[#B41A47] text-white text-xs font-bold hover:bg-[#d62828] transition-colors shadow-md cursor-pointer"
                 >
                   Ver todas las publicaciones
                 </button>

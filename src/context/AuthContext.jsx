@@ -1,12 +1,14 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getFirebaseAuth, checkFirebaseStatus } from '../services/db';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { useIdleTimeout } from '../hooks/useIdleTimeout';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sessionExpiredNotice, setSessionExpiredNotice] = useState(false);
 
   useEffect(() => {
     const isConnected = checkFirebaseStatus();
@@ -19,7 +21,7 @@ export function AuthProvider({ children }) {
             setUser({
               uid: currentUser.uid,
               email: currentUser.email,
-              role: 'ADMIN', // Firebase authenticated user assigned ADMIN role
+              role: 'ADMIN',
             });
           } else {
             setUser(null);
@@ -29,7 +31,6 @@ export function AuthProvider({ children }) {
         return () => unsubscribe();
       }
     } else {
-      // Local Storage session check for fallback
       const localSession = localStorage.getItem("cecati_admin_logged");
       if (localSession === "true") {
         setUser({
@@ -44,19 +45,38 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async (reason = null) => {
     const auth = getFirebaseAuth();
     if (auth) {
-      await firebaseSignOut(auth);
+      try {
+        await firebaseSignOut(auth);
+      } catch (err) {
+        console.error("Error al cerrar sesión en Firebase:", err);
+      }
     }
     localStorage.removeItem("cecati_admin_logged");
     setUser(null);
-  };
+
+    if (reason === 'inactivity') {
+      setSessionExpiredNotice(true);
+    }
+  }, []);
+
+  // Expiración por inactividad a los 30 minutos de inactividad
+  useIdleTimeout(
+    () => {
+      logout('inactivity');
+    },
+    30 * 60 * 1000,
+    !!user
+  );
+
+  const clearSessionNotice = () => setSessionExpiredNotice(false);
 
   const isAdmin = !!user && user.role === 'ADMIN';
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, logout, setUser }}>
+    <AuthContext.Provider value={{ user, isAdmin, loading, logout, setUser, sessionExpiredNotice, clearSessionNotice }}>
       {children}
     </AuthContext.Provider>
   );
