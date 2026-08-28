@@ -39,7 +39,7 @@ export default function Header() {
         }
       }
     };
-    
+
     mediaQuery.addEventListener('change', handleThemeChange);
     return () => mediaQuery.removeEventListener('change', handleThemeChange);
   }, []);
@@ -75,7 +75,7 @@ export default function Header() {
   };
 
   return (
-    <header className={`header ${isScrolled ? 'bg-header' : ''} relative z-50`} id="header">
+    <header className={`header ${isScrolled ? 'bg-header shadow-md' : ''} fixed top-0 w-full z-50 transition-all duration-300`} id="header">
       <nav className="nav flex items-center justify-between w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link to="/" className="nav__logo" onClick={closeMenu}>
           <img src="/assets/img/logo-cecati.webp" alt="Logo CECATI 122" />
@@ -84,8 +84,8 @@ export default function Header() {
         <div className={`nav__menu ${showMenu ? 'absolute top-full left-4 right-4 mt-2 p-5 rounded-2xl bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col gap-4 z-50 md:hidden' : 'max-md:hidden'}`} id="nav-menu">
           <ul className="nav__list md:flex md:items-center md:gap-6">
             <li>
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className={`nav__link ${location.pathname === '/' ? 'active-link' : ''}`}
                 onClick={closeMenu}
               >
@@ -93,8 +93,8 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link 
-                to="/nosotros" 
+              <Link
+                to="/nosotros"
                 className={`nav__link ${location.pathname === '/nosotros' ? 'active-link' : ''}`}
                 onClick={closeMenu}
               >
@@ -102,8 +102,8 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link 
-                to="/cursos" 
+              <Link
+                to="/cursos"
                 className={`nav__link ${location.pathname === '/cursos' ? 'active-link' : ''}`}
                 onClick={closeMenu}
               >
@@ -111,8 +111,8 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link 
-                to="/blog" 
+              <Link
+                to="/blog"
                 className={`nav__link ${location.pathname.startsWith('/blog') ? 'active-link' : ''}`}
                 onClick={closeMenu}
               >
@@ -123,8 +123,8 @@ export default function Header() {
             {/* RENDERIZADO CONDICIONAL POR ROL (DEFAULT-DENY) */}
             {isAdmin && (
               <li>
-                <Link 
-                  to="/admin" 
+                <Link
+                  to="/admin"
                   className={`nav__link ${location.pathname === '/admin' ? 'active-link' : ''} py-1.5 px-3.5 rounded-full bg-cecati text-white font-bold ml-2.5 hover:bg-cecati-hover transition-all duration-300 inline-flex items-center gap-1.5 text-xs shadow-md`}
                   onClick={closeMenu}
                 >
