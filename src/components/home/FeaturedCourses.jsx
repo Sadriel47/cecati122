@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export function FeaturedCourses({ courses }) {
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-900/50 transition-colors duration-300" id="cursos">
+    <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300" id="cursos">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <span className="text-xs font-bold uppercase tracking-widest text-cecati dark:text-red-400 mb-2 block">

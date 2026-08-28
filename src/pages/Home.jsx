@@ -39,7 +39,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="main overflow-hidden">
+    <main className="main overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-300">
       <HeroSection totalCount={totalCount} />
       <FeaturedCourses courses={courses} />
       <CertificationsSection />

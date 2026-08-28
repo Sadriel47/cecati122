@@ -418,7 +418,6 @@ img {
     filter: none; 
 }
 
-.nav__toggle,
 .nav__close,
 .nav__theme {
     display: inline-flex;
@@ -426,6 +425,32 @@ img {
     font-size: 1.5rem;
     cursor: pointer;
     transition: color .4s;
+}
+
+.nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background-color: var(--cecati-color);
+    color: #ffffff !important;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(180, 26, 71, 0.35);
+    transition: transform .2s, background-color .2s;
+    z-index: 20;
+    flex-shrink: 0;
+}
+
+.nav__toggle:hover {
+    transform: scale(1.05);
+    background-color: #8B1336;
+}
+
+.nav__toggle:active {
+    transform: scale(0.95);
 }
 
 .nav__buttons{
@@ -2215,7 +2240,7 @@ img {
 
     .nav__toggle,
     .nav__close{
-        display: none;
+        display: none !important;
     }
     .nav__menu{
         margin-left: auto;

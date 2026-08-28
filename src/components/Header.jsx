@@ -141,7 +141,7 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="nav__buttons">
+        <div className="nav__buttons flex items-center gap-2 sm:gap-3 shrink-0">
           {/* User Session Action / Logout */}
           {user && (
             <button
@@ -155,16 +155,28 @@ export default function Header() {
           )}
 
           {/* Theme button */}
-          <i 
-            className={`ri-${theme === 'dark' ? 'sun' : 'moon'}-fill nav__theme`} 
+          <button
+            type="button"
+            className="w-9 h-9 rounded-xl bg-white/10 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/20 dark:border-gray-700/60 text-white flex items-center justify-center text-lg hover:scale-105 transition-all cursor-pointer"
             id="theme-button"
             onClick={toggleTheme}
-          ></i>
+            aria-label="Cambiar tema de color"
+            title="Cambiar Tema"
+          >
+            <i className={`ri-${theme === 'dark' ? 'sun' : 'moon'}-fill nav__theme`}></i>
+          </button>
 
-          {/* Toggle button */}
-          <div className="nav__toggle" id="nav-toggle" onClick={() => setShowMenu(true)}>
-            <i className="ri-apps-2-fill"></i>
-          </div>
+          {/* Toggle button (Menú Móvil Garantizado en Vertical y Horizontal) */}
+          <button
+            type="button"
+            className="nav__toggle"
+            id="nav-toggle"
+            onClick={() => setShowMenu(true)}
+            aria-label="Abrir menú de navegación"
+            title="Abrir Menú"
+          >
+            <i className="ri-menu-line text-xl"></i>
+          </button>
         </div>
       </nav>
     </header>

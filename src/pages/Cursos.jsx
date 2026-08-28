@@ -80,7 +80,7 @@ export default function Cursos() {
   };
 
   return (
-    <main className="main overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <main className="main overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-300">
       <CourseFilters
         category={category}
         setCategory={setCategory}

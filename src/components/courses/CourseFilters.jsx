@@ -34,7 +34,7 @@ export function CategoryBar({ category, setCategory }) {
 
       <div
         ref={scrollRef}
-        className="w-full p-2 sm:p-3 rounded-2xl sm:rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent_0%,black_4%,black_96%,transparent_100%)]"
+        className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border border-zinc-200/80 dark:border-zinc-800 shadow-sm rounded-full p-1.5 flex items-center gap-1 sm:gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full"
       >
         {categories.map((cat) => {
           const isActive = category === cat.id;
@@ -43,9 +43,9 @@ export function CategoryBar({ category, setCategory }) {
               key={cat.id}
               type="button"
               onClick={() => setCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-extrabold transition-all duration-300 flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${isActive
-                ? 'bg-cecati text-white shadow-md shadow-red-900/30 dark:bg-cecati dark:text-white dark:shadow-red-950/60 scale-105'
-                : 'bg-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/70 hover:text-gray-900 dark:hover:text-white'
+              className={`px-4 py-2 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${isActive
+                ? 'bg-rose-700 text-white shadow-sm'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100/70 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-800/70'
                 }`}
             >
               <i className={`${cat.icon} text-base`}></i>
@@ -75,15 +75,15 @@ export function CourseFilters({
 }) {
   return (
     <>
-      {/* HERO HERO BARS & SEARCH */}
-      <section className="relative min-h-[50vh] flex items-center justify-center pt-28 pb-16 px-4 overflow-hidden bg-gradient-to-br from-[#5C0A22] via-[#12161F] to-[#8B1336]" id="home">
+      <section className="relative min-h-[50vh] flex items-center justify-center pt-28 pb-16 px-4 overflow-hidden border-b border-zinc-200/80 dark:border-transparent" id="cursos-hero">
         <img
           src="/assets/img/home-img-1.jpg"
           alt="Cursos CECATI 122"
           className="absolute inset-0 w-full h-full object-cover object-center"
           onError={(e) => { e.target.style.display = 'none'; }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-gray-900 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/85 backdrop-blur-sm"></div>
+        <div className="hidden dark:block absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-transparent backdrop-blur-sm pointer-events-none z-10"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 text-xs sm:text-sm font-semibold text-white shadow-lg">

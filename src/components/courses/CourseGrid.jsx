@@ -7,7 +7,7 @@ export function CourseGrid({
   onResetFilters
 }) {
   return (
-    <section className="max-w-6xl mx-auto px-4 py-12">
+    <section className="max-w-6xl mx-auto px-4 py-12 transition-colors duration-300">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200 dark:border-gray-700 pb-4">
           <div>

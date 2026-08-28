@@ -7,18 +7,19 @@ export default function Nosotros() {
   }, []);
 
   return (
-    <main className="main overflow-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <main className="main overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-300">
       {/*==================== HERO NOSOTROS ====================*/}
-      <section className="relative min-h-[60vh] flex items-center justify-center pt-24 pb-16 px-4 overflow-hidden bg-gradient-to-br from-[#5C0A22] via-[#12161F] to-[#8B1336]" id="home">
+      <section className="relative min-h-[60vh] flex items-center justify-center pt-24 pb-16 px-4 overflow-hidden border-b border-zinc-200/80 dark:border-transparent" id="home">
         {/* Background Image */}
         <img
           src="/assets/img/home.jpg"
-          alt="CECATI 122 Instalaciones" 
+          alt="CECATI 122 Instalaciones"
           className="absolute inset-0 w-full h-full object-cover object-center"
           onError={(e) => { e.target.style.display = 'none'; }}
         />
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90 backdrop-blur-md"></div>
+        <div className="hidden dark:block absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-transparent backdrop-blur-sm pointer-events-none z-10"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/25 text-xs sm:text-sm font-semibold text-white shadow-lg">
@@ -39,7 +40,7 @@ export default function Nosotros() {
       {/*==================== NOSOTROS SECTION ====================*/}
       <section className="py-16 sm:py-24 px-4" id="nosotros">
         <div className="max-w-6xl mx-auto space-y-16">
-          
+
           {/* Conoce la DGCFT */}
           <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 sm:p-12 shadow-xl border border-gray-100 dark:border-gray-700/60 transition-colors duration-300">
             <div className="text-center max-w-2xl mx-auto mb-10">
@@ -227,10 +228,10 @@ export default function Nosotros() {
               <div className="lg:col-span-7 h-80 sm:h-96 rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d8319.81455718384!2d-99.899431!3d20.521861!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d39e07959270a7%3A0x40a0708822ff8ff4!2sCECATI%20122%20DGCFT!5e1!3m2!1ses-419!2sbo!4v1755986311751!5m2!1ses-419!2sbo"
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen="" 
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="Ubicación Google Maps CECATI 122"
