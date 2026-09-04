@@ -2,7 +2,8 @@ import { memo } from 'react';
 import { formatCourseDate, getCourseStatusBadge, getShiftBadge } from '../../utils/dateUtils';
 
 function getCategoryIcon(cat) {
-  switch (cat) {
+  if (!cat) return 'ri-book-open-line';
+  switch (cat.toLowerCase()) {
     case 'tecnologia': return 'ri-computer-line';
     case 'textil': return 'ri-shirt-line';
     case 'gastronomia': return 'ri-cake-3-line';
@@ -15,7 +16,8 @@ function getCategoryIcon(cat) {
 }
 
 function getCategoryLabel(cat) {
-  switch (cat) {
+  if (!cat) return 'General';
+  switch (cat.toLowerCase()) {
     case 'tecnologia': return 'Tecnología';
     case 'textil': return 'Textil';
     case 'gastronomia': return 'Gastronomía';
@@ -23,7 +25,8 @@ function getCategoryLabel(cat) {
     case 'automotriz': return 'Automotriz';
     case 'estilismo': return 'Estilismo y Belleza';
     case 'idiomas': return 'Idiomas';
-    default: return 'General';
+    default:
+      return cat.charAt(0).toUpperCase() + cat.slice(1);
   }
 }
 

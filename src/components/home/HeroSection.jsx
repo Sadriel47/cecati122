@@ -1,33 +1,36 @@
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 
 import 'swiper/css';
 
-const SOCIAL_LINKS = [
-  {
-    name: 'Facebook Oficial',
-    url: 'https://www.facebook.com/cecati122',
-    icon: 'ri-facebook-fill',
-  },
-  {
-    name: 'WhatsApp Directo',
-    url: 'https://wa.me/524142731601?text=Hola,%20quisiera%20recibir%20información%20sobre%20los%20cursos',
-    icon: 'ri-whatsapp-line',
-  },
-  {
-    name: 'YouTube Oficial',
-    url: 'https://www.youtube.com/@cecati122',
-    icon: 'ri-youtube-fill',
-  },
-  {
-    name: 'Instagram Oficial',
-    url: 'https://www.instagram.com/cecati122',
-    icon: 'ri-instagram-line',
-  },
-];
-
 export function HeroSection({ totalCount }) {
+  const { config, getWhatsAppLink } = useSiteConfig();
+
+  const socialLinks = [
+    {
+      name: 'Facebook Oficial',
+      url: config.facebook || 'https://www.facebook.com/cecati122',
+      icon: 'ri-facebook-fill',
+    },
+    {
+      name: 'WhatsApp Directo',
+      url: getWhatsAppLink('Hola, quisiera recibir información sobre los cursos'),
+      icon: 'ri-whatsapp-line',
+    },
+    {
+      name: 'YouTube Oficial',
+      url: config.youtube || 'https://www.youtube.com/@cecati122onlinetx4',
+      icon: 'ri-youtube-fill',
+    },
+    {
+      name: 'Instagram Oficial',
+      url: config.instagram || 'https://www.instagram.com/cecati122tx/',
+      icon: 'ri-instagram-line',
+    },
+  ];
+
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-16 px-4 overflow-hidden border-b border-zinc-200/80 dark:border-transparent" id="home">
       {/* Background Image */}
@@ -99,7 +102,7 @@ export function HeroSection({ totalCount }) {
           <div className="relative overflow-hidden rounded-3xl p-2 bg-gradient-to-tr from-white/20 to-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
             {/* Botonera Flotante de Redes Sociales */}
             <div className="absolute top-3 right-3 z-20 bg-zinc-950/75 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-full shadow-xl flex items-center gap-2.5">
-              {SOCIAL_LINKS.map((social) => (
+              {socialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.url}

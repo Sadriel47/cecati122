@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 export default function Footer() {
   const { isAdmin } = useAuth();
+  const { config, getWhatsAppLink } = useSiteConfig();
 
   return (
     <footer className="bg-gray-900 text-gray-300 pt-16 pb-8 border-t border-gray-800 transition-colors duration-300">
@@ -74,19 +76,30 @@ export default function Footer() {
             <ul className="space-y-3 text-xs sm:text-sm text-gray-400">
               <li className="flex items-start gap-2.5">
                 <i className="ri-map-pin-2-fill text-red-500 text-base shrink-0 mt-0.5"></i>
-                <span>Av. Venustiano Carranza 22, Tequisquiapan, Qro.</span>
+                <span>{config.address || 'Av. Venustiano Carranza 22, Tequisquiapan, Qro.'}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <i className="ri-phone-fill text-blue-400 text-base shrink-0"></i>
-                <span>+52 414 273 1601</span>
+                <span>{config.phone || '+52 442 661 7408'}</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <i className="ri-whatsapp-fill text-emerald-400 text-base shrink-0"></i>
+                <a
+                  href={getWhatsAppLink('Hola, quisiera información sobre los cursos')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline hover:text-emerald-400 transition-colors"
+                >
+                  WhatsApp: {config.whatsapp || '4426617408'}
+                </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <i className="ri-time-line text-amber-400 text-base shrink-0"></i>
-                <span>Lun - Vie: 7:00 am - 9:00 pm</span>
+                <span>{config.schedule || 'Lun - Vie: 7:00 am - 9:00 pm'}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <i className="ri-mail-fill text-emerald-400 text-base shrink-0"></i>
-                <span className="break-all">cecati122.dir@dgcft.sems.gob.mx</span>
+                <span className="break-all">{config.email || 'cecati122.dir@dgcft.sems.gob.mx'}</span>
               </li>
             </ul>
           </div>
@@ -97,7 +110,7 @@ export default function Footer() {
             <p className="text-xs text-gray-400">Síguenos en nuestras comunidades oficiales:</p>
             <div className="flex flex-wrap gap-2.5">
               <a 
-                href="https://www.facebook.com/cecati122" 
+                href={config.facebook || 'https://www.facebook.com/cecati122'} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 aria-label="Facebook"
@@ -106,7 +119,7 @@ export default function Footer() {
                 <i className="ri-facebook-fill"></i>
               </a>
               <a 
-                href="https://www.instagram.com/cecati122tx/" 
+                href={config.instagram || 'https://www.instagram.com/cecati122tx/'} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 aria-label="Instagram"
@@ -115,7 +128,7 @@ export default function Footer() {
                 <i className="ri-instagram-fill"></i>
               </a>
               <a 
-                href="https://www.tiktok.com/search?q=cecati%20122&t=1755982982608" 
+                href={config.tiktok || 'https://www.tiktok.com/search?q=cecati%20122'} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 aria-label="TikTok"
@@ -124,7 +137,7 @@ export default function Footer() {
                 <i className="ri-tiktok-fill"></i>
               </a>
               <a 
-                href="https://www.youtube.com/@cecati122onlinetx4" 
+                href={config.youtube || 'https://www.youtube.com/@cecati122onlinetx4'} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 aria-label="YouTube"
@@ -136,6 +149,7 @@ export default function Footer() {
           </div>
 
         </div>
+
 
         {/* Bottom Copyright Ribbon */}
         <div className="pt-8 text-center text-xs text-gray-500 space-y-2">

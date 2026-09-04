@@ -7,6 +7,7 @@ import { CoursesTab } from '../components/admin/tabs/CoursesTab';
 import { PreRegistrationsTab } from '../components/admin/tabs/PreRegistrationsTab';
 import { NewsTab } from '../components/admin/tabs/NewsTab';
 import { TestimonialsTab } from '../components/admin/tabs/TestimonialsTab';
+import { SettingsTab } from '../components/admin/tabs/SettingsTab';
 import { CourseModal } from '../components/admin/modals/CourseModal';
 import { PostModal } from '../components/admin/modals/PostModal';
 import { TestimonialModal } from '../components/admin/modals/TestimonialModal';
@@ -254,6 +255,11 @@ export default function Admin() {
             <i className="ri-chat-quote-line"></i>
             <span>Testimonios ({testimonials.length})</span>
           </button>
+
+          <button onClick={() => setAdminTab('settings')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'settings' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+            <i className="ri-settings-4-line"></i>
+            <span>Enlaces y Contacto</span>
+          </button>
         </div>
 
         {/* VISTAS DE PESTAÑAS */}
@@ -299,6 +305,11 @@ export default function Admin() {
             onDeleteTestimonial={handleDeleteTestimonial}
           />
         )}
+
+        {adminTab === 'settings' && (
+          <SettingsTab showToast={showToast} />
+        )}
+
       </div>
 
       {/* MODALES INDEPENDIENTES */}

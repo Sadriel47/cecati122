@@ -187,7 +187,7 @@ export function CourseModal({
               <label className="font-bold text-gray-900 dark:text-white">Requisitos de Ingreso</label>
               <input
                 type="text"
-                placeholder="Ej. CURP y acta de nacimiento"
+                placeholder="Ej. Copia de Acta, CURP, Comp. estudios/domicilio, 2 fotos y pago Banorte 1056897860"
                 value={formRequirements}
                 onChange={(e) => setFormRequirements(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"

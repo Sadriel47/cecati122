@@ -1,7 +1,11 @@
 import { getShiftBadge } from '../../utils/dateUtils';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 
 export function CourseSidebarInfo({ selectedCourse, activeTab, setActiveTab }) {
   const shiftBadge = getShiftBadge(selectedCourse?.shift);
+  const { getWhatsAppLink } = useSiteConfig();
+
+  const waLink = getWhatsAppLink(`Hola, quisiera recibir informes e inscribirme al curso de ${selectedCourse?.title || ''}`);
 
   return (
     <div className="lg:col-span-5 space-y-5">
@@ -35,13 +39,18 @@ export function CourseSidebarInfo({ selectedCourse, activeTab, setActiveTab }) {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-500 dark:text-gray-400">Requisitos:</span>
-            <strong className="text-gray-900 dark:text-white font-bold">{selectedCourse.requirements}</strong>
+            <button
+              onClick={() => setActiveTab('requirements')}
+              className="text-cecati dark:text-red-400 font-extrabold hover:underline text-right ml-2"
+            >
+              {selectedCourse.requirements || 'Copias (Acta, CURP, etc.)'}
+            </button>
           </div>
         </div>
 
         <div className="space-y-2.5 pt-1">
           <a
-            href={`https://wa.me/524142731601?text=Hola,%20quisiera%20recibir%20informes%20e%20inscribirme%20al%20curso%20de%20${encodeURIComponent(selectedCourse.title)}`}
+            href={waLink}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full py-3.5 rounded-xl bg-[#25D366] hover:bg-[#1EBE57] text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2"

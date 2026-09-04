@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 export default function Nosotros() {
+  const { config, getWhatsAppLink } = useSiteConfig();
+
   useEffect(() => {
     document.title = "Nosotros - CECATI 122";
     window.scrollTo(0, 0);
   }, []);
+
 
   return (
     <main className="main overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -193,7 +197,26 @@ export default function Nosotros() {
                   <div>
                     <h4 className="font-bold text-gray-900 dark:text-white text-sm">Teléfono</h4>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-0.5">
-                      +52 414 273 1601
+                      {config.phone || '+52 442 661 7408'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-700/50">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold shrink-0">
+                    <i className="ri-whatsapp-fill text-emerald-500"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">WhatsApp</h4>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-0.5">
+                      <a
+                        href={getWhatsAppLink('Hola, quisiera información sobre las instalaciones y cursos')}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline"
+                      >
+                        {config.whatsapp || '4426617408'}
+                      </a>
                     </p>
                   </div>
                 </div>
@@ -205,8 +228,7 @@ export default function Nosotros() {
                   <div>
                     <h4 className="font-bold text-gray-900 dark:text-white text-sm">Horario de Atención</h4>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-0.5">
-                      Lunes a Viernes: 7:00 am - 9:00 pm<br />
-                      Sábados: 7:00 am - 1:00 pm
+                      {config.schedule || 'Lun - Vie: 7:00 am - 9:00 pm | Sáb: 7:00 am - 1:00 pm'}
                     </p>
                   </div>
                 </div>
@@ -218,7 +240,7 @@ export default function Nosotros() {
                   <div>
                     <h4 className="font-bold text-gray-900 dark:text-white text-sm">Correo Electrónico</h4>
                     <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-0.5 break-all">
-                      cecati122.dir@dgcft.sems.gob.mx
+                      {config.email || 'cecati122.dir@dgcft.sems.gob.mx'}
                     </p>
                   </div>
                 </div>

@@ -1,5 +1,20 @@
 import { Link } from 'react-router-dom';
 
+function getCategoryLabel(cat) {
+  if (!cat) return 'Capacitación Técnica';
+  switch (cat.toLowerCase()) {
+    case 'tecnologia': return 'Tecnología';
+    case 'textil': return 'Textil';
+    case 'gastronomia': return 'Gastronomía';
+    case 'administracion': return 'Administración';
+    case 'automotriz': return 'Automotriz';
+    case 'estilismo': return 'Estilismo y Belleza';
+    case 'idiomas': return 'Idiomas';
+    default:
+      return cat.charAt(0).toUpperCase() + cat.slice(1);
+  }
+}
+
 export function FeaturedCourses({ courses }) {
   return (
     <section className="py-20 bg-white dark:bg-zinc-950 transition-colors duration-300" id="cursos">
@@ -37,8 +52,8 @@ export function FeaturedCourses({ courses }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
 
                 {/* Category Pill Tag */}
-                <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-cecati text-white shadow-md">
-                  {course.category || 'Capacitación Técnica'}
+                <span className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-cecati text-white shadow-md capitalize">
+                  {getCategoryLabel(course.category)}
                 </span>
               </div>
 

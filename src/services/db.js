@@ -67,3 +67,13 @@ export {
 
 // Re-exportación de Servicio de Monitoreo de Almacenamiento
 export { calculateStorageUsage } from './storageUsageService';
+
+// Re-exportación de Servicio de Configuración de Sitio y Contacto
+export {
+  getSiteConfig,
+  saveSiteConfig,
+  getCleanWhatsAppNumber,
+  getWhatsAppUrl,
+  DEFAULT_SITE_CONFIG
+} from './siteConfigService';
+
