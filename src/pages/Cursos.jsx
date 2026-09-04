@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getCourses } from '../services/db';
+import { getCourses, getCourseById } from '../services/db';
 import { useCourseRegistration } from '../hooks/useCourseRegistration';
 import { CourseFilters } from '../components/courses/CourseFilters';
 import { CourseGrid } from '../components/courses/CourseGrid';
@@ -23,7 +23,7 @@ export default function Cursos() {
     window.scrollTo(0, 0);
     const fetchCourses = async () => {
       try {
-        const data = await getCourses();
+        const data = await getCourses('todos', true); // Solo activos y limitados a 24
         setCourses(data);
         setFilteredCourses(data);
       } catch (err) {
@@ -35,19 +35,27 @@ export default function Cursos() {
     fetchCourses();
   }, []);
 
+  const courseIdParam = searchParams.get('id') || searchParams.get('curso');
+
   useEffect(() => {
     if (courses.length > 0) {
-      const courseIdParam = searchParams.get('id') || searchParams.get('curso');
       if (courseIdParam) {
         const found = courses.find(c => String(c.id) === String(courseIdParam));
         if (found) {
-          setSelectedCourse(found);
-          setActiveTab('overview');
-          reg.setRegisterSuccess(false);
+          setSelectedCourse(prev => {
+            if (!prev || String(prev.id) !== String(found.id)) {
+              setActiveTab('overview');
+              reg.setRegisterSuccess(false);
+              return found;
+            }
+            return prev;
+          });
         }
+      } else {
+        setSelectedCourse(null);
       }
     }
-  }, [courses, searchParams, reg]);
+  }, [courses, courseIdParam]);
 
   useEffect(() => {
     let result = courses;
@@ -65,17 +73,34 @@ export default function Cursos() {
     setFilteredCourses(result);
   }, [category, searchTerm, courses]);
 
-  const handleOpenDetails = useCallback((course) => {
-    setSelectedCourse(course);
-    setActiveTab('overview');
-    reg.setRegisterSuccess(false);
-  }, [reg]);
+  const handleOpenDetails = useCallback(async (course) => {
+    // Si la URL no tiene el ID, la actualizamos. Esto disparará el useEffect de arriba.
+    // Si ya estamos en la misma URL, forzamos la apertura directa.
+    const currentId = searchParams.get('id') || searchParams.get('curso');
+    if (String(currentId) !== String(course.id)) {
+      setSearchParams({ id: course.id });
+    } else {
+      setSelectedCourse({ ...course, isLoadingDetails: true });
+      setActiveTab('overview');
+      reg.setRegisterSuccess(false);
+    }
+
+    try {
+      const fullDetails = await getCourseById(course.id);
+      setSelectedCourse(fullDetails ? { ...fullDetails, isLoadingDetails: false } : course);
+    } catch (err) {
+      console.error("Error al obtener detalle del curso:", err);
+      setSelectedCourse({ ...course, isLoadingDetails: false });
+    }
+  }, [reg, searchParams, setSearchParams]);
 
   const handleCloseModal = () => {
-    setSelectedCourse(null);
     reg.setRegisterSuccess(false);
     if (searchParams.get('id') || searchParams.get('curso')) {
+      // Al limpiar los params, el useEffect cerrará el modal automáticamente
       setSearchParams({}, { replace: true });
+    } else {
+      setSelectedCourse(null);
     }
   };
 

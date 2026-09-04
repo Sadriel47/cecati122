@@ -123,9 +123,12 @@ export function CourseFilters({
       </section>
 
       {/* CATEGORY BAR */}
-      <section className="max-w-6xl mx-auto px-4 -mt-6 relative z-20">
-        <CategoryBar category={category} setCategory={setCategory} />
-      </section>
+      {/* Oculto temporalmente a petición del usuario porque hay pocos cursos */}
+      {false && (
+        <section className="max-w-6xl mx-auto px-4 -mt-6 relative z-20">
+          <CategoryBar category={category} setCategory={setCategory} />
+        </section>
+      )}
     </>
   );
 }

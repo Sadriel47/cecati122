@@ -40,7 +40,12 @@ export function CourseDetailTabs({
       </div>
 
       <div className="space-y-6 text-gray-700 dark:text-gray-300 text-sm">
-        {activeTab === 'overview' && (
+        {selectedCourse.isLoadingDetails ? (
+          <div className="flex flex-col items-center justify-center py-16 space-y-3">
+            <i className="ri-loader-4-line ri-spin text-4xl text-cecati dark:text-red-400"></i>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-bold">Cargando temario y detalles del curso...</p>
+          </div>
+        ) : activeTab === 'overview' && (
           <div className="space-y-5 animate-fade-in">
             <div className="space-y-2">
               <h4 className="font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">

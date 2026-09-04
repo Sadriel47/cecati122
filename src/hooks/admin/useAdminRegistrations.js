@@ -53,6 +53,7 @@ export function useAdminRegistrations({ showToast }) {
 
   return {
     registrations,
+    setRegistrations,
     loadingRegs,
     fetchRegistrations,
     handleRegistrationStatusChange,

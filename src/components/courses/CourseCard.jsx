@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { formatCourseDate, getCourseStatusBadge } from '../../utils/dateUtils';
+import { formatCourseDate, getCourseStatusBadge, getShiftBadge } from '../../utils/dateUtils';
 
 function getCategoryIcon(cat) {
   switch (cat) {
@@ -29,6 +29,7 @@ function getCategoryLabel(cat) {
 
 export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
   const statusBadge = getCourseStatusBadge(course.startDate, course.endDate);
+  const shiftBadge = getShiftBadge(course.shift);
 
   let rawImg = course.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80';
   if (rawImg.includes('unsplash.com') && !rawImg.includes('w=')) {
@@ -72,19 +73,30 @@ export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
             {course.title}
           </h3>
 
-          <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-300 pt-1">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <i className="ri-time-line text-cecati dark:text-red-400"></i>
-                <span>{course.duration || '240'} hrs</span>
+          <div className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300 pt-1">
+            <div className="flex items-center justify-between gap-2">
+              {/* Insignia de Turno con Color Distintivo */}
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold shadow-2xs ${shiftBadge.colorClass}`}>
+                <i className={`${shiftBadge.icon} ${shiftBadge.iconColor} text-sm`}></i>
+                <span>{course.shift || 'Matutino'}</span>
               </span>
-              <span className="flex items-center gap-1.5 font-medium text-gray-700 dark:text-gray-200">
-                <i className="ri-calendar-event-line text-cecati dark:text-red-400"></i>
-                <span className="truncate max-w-[170px]" title={course.formattedPeriod || formatCourseDate(course.startDate, course.endDate)}>
+
+              <span className="flex items-center gap-1.5 font-medium text-gray-700 dark:text-gray-200 text-[11px]">
+                <i className="ri-calendar-event-line text-cecati dark:text-red-400 text-xs"></i>
+                <span className="truncate max-w-[145px]" title={course.formattedPeriod || formatCourseDate(course.startDate, course.endDate)}>
                   {course.formattedPeriod || formatCourseDate(course.startDate, course.endDate)}
                 </span>
               </span>
             </div>
+
+            {course.instructor && (
+              <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 pt-0.5 border-t border-gray-100 dark:border-gray-700/60">
+                <i className="ri-user-star-line text-cecati dark:text-red-400 text-sm shrink-0"></i>
+                <span className="truncate" title={`Profesor(a): ${course.instructor}`}>
+                  Prof. <strong className="text-gray-700 dark:text-gray-300 font-bold">{course.instructor}</strong>
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

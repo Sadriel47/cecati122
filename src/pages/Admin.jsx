@@ -18,7 +18,7 @@ export default function Admin() {
     toastMessage, toastType, showToast, storageInfo, fetchStorageInfo,
     isLoggedIn, loginEmail, setLoginEmail, loginPassword, setLoginPassword,
     authError, isFirebase, authChecking, adminTab, setAdminTab, confirmModal,
-    setConfirmModal, handleLoginSubmit, handleLogout, registrations, loadingRegs,
+    setConfirmModal, handleLoginSubmit, handleLogout, registrations, setRegistrations, loadingRegs,
     handleRegistrationStatusChange, exportRegistrationsToCSV, posts, loadingPosts,
     isPostModalOpen, currentPost, savingPost, openPostModal, closePostModal, handleSavePost,
     handleTogglePostStatus, handleDeletePost, postTitle, setPostTitle, postExcerpt, setPostExcerpt,
@@ -35,7 +35,7 @@ export default function Admin() {
   // Custom hook para Cursos
   const {
     loading: loadingCourses, savingCourse, searchTerm, setSearchTerm, filteredCourses,
-    totalCourses, totalHours, avgCost, handleSaveCourse, handleDeleteCourse
+    totalCourses, morningShiftsCount, avgCost, handleSaveCourse, handleDeleteCourse, handleQuickUpdateCourse
   } = useCourses({ showToast, onCourseMutated: fetchStorageInfo });
 
   // Estado Local del Modal de Curso
@@ -43,7 +43,8 @@ export default function Admin() {
   const [currentCourse, setCurrentCourse] = useState(null);
   const [formTitle, setFormTitle] = useState('');
   const [formCategory, setFormCategory] = useState('tecnologia');
-  const [formDuration, setFormDuration] = useState('');
+  const [formShift, setFormShift] = useState('Matutino');
+  const [formInstructor, setFormInstructor] = useState('');
   const [formStartDate, setFormStartDate] = useState('');
   const [formEndDate, setFormEndDate] = useState('');
   const [formSchedules, setFormSchedules] = useState([{ days: ['Lunes', 'Martes', 'Miércoles', 'Jueves'], startTime: '08:00', endTime: '13:00' }]);
@@ -85,7 +86,8 @@ export default function Admin() {
     if (course) {
       setFormTitle(course.title || '');
       setFormCategory(course.category || 'tecnologia');
-      setFormDuration(course.duration || '');
+      setFormShift(course.shift || 'Matutino');
+      setFormInstructor(course.instructor || '');
       setFormStartDate(course.startDate || '');
       setFormEndDate(course.endDate || '');
       setFormSchedules(course.schedules?.length ? course.schedules : [{ days: ['Lunes', 'Martes', 'Miércoles', 'Jueves'], startTime: '08:00', endTime: '13:00' }]);
@@ -96,7 +98,7 @@ export default function Admin() {
       setFormSyllabus(course.syllabus?.length ? [...course.syllabus] : ['']);
       setFormPayments(course.payments?.length ? [...course.payments] : [{ date: '', title: '', desc: '' }]);
     } else {
-      setFormTitle(''); setFormCategory('tecnologia'); setFormDuration(''); setFormStartDate(''); setFormEndDate('');
+      setFormTitle(''); setFormCategory('tecnologia'); setFormShift('Matutino'); setFormInstructor(''); setFormStartDate(''); setFormEndDate('');
       setFormSchedules([{ days: ['Lunes', 'Martes', 'Miércoles', 'Jueves'], startTime: '08:00', endTime: '13:00' }]);
       setFormRequirements('CURP y acta de nacimiento'); setFormPrice('$1,200 MXN'); setFormImage(''); setFormProfile('');
       setFormSyllabus(['']); setFormPayments([{ date: '', title: '', desc: '' }]);
@@ -109,7 +111,7 @@ export default function Admin() {
   const handleSaveCourseSubmit = async (e) => {
     e.preventDefault();
     const success = await handleSaveCourse({
-      currentCourse, formTitle, formCategory, formDuration, formStartDate, formEndDate,
+      currentCourse, formTitle, formCategory, formShift, formInstructor, formStartDate, formEndDate,
       formSchedules, formRequirements, formPrice, formImage, formImageFile, formProfile, formSyllabus, formPayments
     });
     if (success) closeCourseModal();
@@ -226,7 +228,7 @@ export default function Admin() {
         </div>
 
         {/* KPIs */}
-        <AdminHeaderStats totalCourses={totalCourses} totalHours={totalHours} avgCost={avgCost} />
+        <AdminHeaderStats totalCourses={totalCourses} morningShiftsCount={morningShiftsCount} avgCost={avgCost} />
 
         {/* Monitor de Cuotas */}
         <FirebaseQuotaMonitor storageInfo={storageInfo} onRefresh={fetchStorageInfo} />
@@ -264,15 +266,17 @@ export default function Admin() {
             onEditCourse={openCourseModal}
             onDeleteCourse={handleDeleteCourseClick}
             onCreateCourse={() => openCourseModal()}
+            onQuickUpdate={handleQuickUpdateCourse}
           />
         )}
 
         {adminTab === 'registrations' && (
           <PreRegistrationsTab
             registrations={registrations}
+            setRegistrations={setRegistrations}
             loadingRegs={loadingRegs}
             onStatusChange={handleRegistrationStatusChange}
-            onExportCSV={exportRegistrationsToCSV}
+            showToast={showToast}
           />
         )}
 
@@ -306,10 +310,12 @@ export default function Admin() {
         onSubmit={handleSaveCourseSubmit}
         formTitle={formTitle} setFormTitle={setFormTitle}
         formCategory={formCategory} setFormCategory={setFormCategory}
-        formDuration={formDuration} setFormDuration={setFormDuration}
+        formShift={formShift} setFormShift={setFormShift}
+        formInstructor={formInstructor} setFormInstructor={setFormInstructor}
         formStartDate={formStartDate} setFormStartDate={setFormStartDate}
         formEndDate={formEndDate} setFormEndDate={setFormEndDate}
         formSchedules={formSchedules}
+        setFormSchedules={setFormSchedules}
         handleAddScheduleRule={handleAddScheduleRule}
         handleRemoveScheduleRule={handleRemoveScheduleRule}
         handleToggleScheduleDay={handleToggleScheduleDay}

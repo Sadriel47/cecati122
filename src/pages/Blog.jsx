@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getPosts } from '../services/postsService';
+import { NewsCardSkeleton } from '../components/blog/NewsCardSkeleton';
 
 const CATEGORIES = [
   'Todas',
@@ -157,11 +158,12 @@ export default function Blog() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        {/* Cargando */}
+        {/* Cargando con Skeleton Loaders */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#B41A47] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Cargando publicaciones...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <NewsCardSkeleton key={idx} />
+            ))}
           </div>
         ) : (
           <>

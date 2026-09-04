@@ -13,13 +13,16 @@ export function CourseModal({
   setFormTitle,
   formCategory,
   setFormCategory,
-  formDuration,
-  setFormDuration,
+  formShift,
+  setFormShift,
+  formInstructor,
+  setFormInstructor,
   formStartDate,
   setFormStartDate,
   formEndDate,
   setFormEndDate,
   formSchedules,
+  setFormSchedules,
   handleAddScheduleRule,
   handleRemoveScheduleRule,
   handleToggleScheduleDay,
@@ -66,33 +69,18 @@ export function CourseModal({
         {/* Modal Form Content */}
         <form onSubmit={onSubmit} className="p-6 sm:p-8 overflow-y-auto space-y-6 text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
 
-          {/* Fila 1: Título, Categoría, Costo */}
+          {/* Fila 1: Título del Curso y Costo */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-1">
+            <div className="sm:col-span-2 space-y-1">
               <label className="font-bold text-gray-900 dark:text-white">Título del Curso *</label>
               <input
                 type="text"
-                placeholder="Ej. Informática Avanzada"
+                placeholder="Ej. Mantenimiento Automotriz y Diagnóstico"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
               />
-            </div>
-
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Categoría *</label>
-              <select
-                value={formCategory}
-                onChange={(e) => setFormCategory(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              >
-                <option value="tecnologia">Tecnología</option>
-                <option value="textil">Textil</option>
-                <option value="gastronomia">Gastronomía</option>
-                <option value="administracion">Administración</option>
-                <option value="automotriz">Automotriz</option>
-              </select>
             </div>
 
             <div className="space-y-1">
@@ -108,20 +96,58 @@ export function CourseModal({
             </div>
           </div>
 
-          {/* Fila 2: Duración, Fecha Inicio, Fecha Término */}
+          {/* Fila 2: Categoría, Turno, Profesor(a) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Duración (Horas) *</label>
+              <label className="font-bold text-gray-900 dark:text-white">Categoría *</label>
+              <select
+                value={formCategory}
+                onChange={(e) => setFormCategory(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+              >
+                <option value="tecnologia">Tecnología</option>
+                <option value="textil">Textil</option>
+                <option value="gastronomia">Gastronomía</option>
+                <option value="administracion">Administración</option>
+                <option value="automotriz">Automotriz</option>
+                <option value="estilismo">Estilismo y Belleza</option>
+                <option value="idiomas">Idiomas</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-gray-900 dark:text-white">Turno *</label>
+              <select
+                value={formShift}
+                onChange={(e) => setFormShift(e.target.value)}
+                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+              >
+                <option value="Matutino">Matutino</option>
+                <option value="Vespertino">Vespertino</option>
+                <option value="Sabatino">Sabatino</option>
+                <option value="Dominical">Dominical</option>
+                <option value="Mixto / Fin de Semana">Mixto / Fin de Semana</option>
+                <option value="Especial / Flexible">Especial / Flexible</option>
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                <i className="ri-user-star-line text-cecati"></i>
+                <span>Profesor(a) / Instructor(a)</span>
+              </label>
               <input
-                type="number"
-                placeholder="Ej. 240"
-                value={formDuration}
-                onChange={(e) => setFormDuration(e.target.value)}
-                required
+                type="text"
+                placeholder="Ej. Ing. Juan Morales"
+                value={formInstructor}
+                onChange={(e) => setFormInstructor(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
               />
             </div>
+          </div>
 
+          {/* Fila 3: Fecha Inicio y Fecha Término */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="font-bold text-gray-900 dark:text-white">Fecha de Inicio *</label>
               <input
@@ -148,6 +174,7 @@ export function CourseModal({
           {/* Selector Estructurado de Horarios (Full-Width Minimalista) */}
           <ScheduleSelector
             formSchedules={formSchedules}
+            setFormSchedules={setFormSchedules}
             onAddRule={handleAddScheduleRule}
             onRemoveRule={handleRemoveScheduleRule}
             onToggleDay={handleToggleScheduleDay}
@@ -167,26 +194,18 @@ export function CourseModal({
               />
             </div>
 
-            {/* Subida de Imagen a Firebase Storage */}
+            {/* URL de Imagen de Portada */}
             <div className="space-y-1">
               <label className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                <i className="ri-upload-cloud-2-line text-cecati"></i>
-                <span>Imagen de Portada (Firebase Storage / URL)</span>
+                <i className="ri-image-line text-cecati"></i>
+                <span>URL de la Imagen de Portada</span>
               </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFormImageFile(e.target.files[0] || null)}
-                  className="text-xs file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cecati file:text-white hover:file:bg-cecati-hover cursor-pointer"
-                />
-              </div>
               <input
                 type="text"
-                placeholder="O pega una URL externa (https://...)"
+                placeholder="Pega una URL de imagen (https://...)"
                 value={formImage}
                 onChange={(e) => setFormImage(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-xs mt-1"
+                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
               />
             </div>
           </div>
@@ -231,7 +250,7 @@ export function CourseModal({
               {savingCourse ? (
                 <>
                   <i className="ri-loader-4-line ri-spin"></i>
-                  <span>Guardando en Firebase...</span>
+                  <span>Guardando...</span>
                 </>
               ) : (
                 <>

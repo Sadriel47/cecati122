@@ -2,6 +2,7 @@ import { auth, db } from '../firebase/config';
 import { 
   getCourses as fetchCoursesFromFirestore, 
   getCourseCount as fetchCountFromFirestore,
+  getCourseById as fetchCourseByIdFromFirestore,
   saveCourse as saveCourseToFirestore, 
   deleteCourse as removeCourseFromFirestore
 } from './coursesService';
@@ -9,12 +10,21 @@ import {
 export const checkFirebaseStatus = () => !!db;
 export const getFirebaseAuth = () => auth;
 
-export const getCourses = async (category = 'todos') => {
+export const getCourses = async (category = 'todos', publicOnly = false) => {
   try {
-    return await fetchCoursesFromFirestore(category);
+    return await fetchCoursesFromFirestore(category, publicOnly);
   } catch (err) {
     console.warn("Error al obtener cursos:", err);
     return [];
+  }
+};
+
+export const getCourseById = async (id) => {
+  try {
+    return await fetchCourseByIdFromFirestore(id);
+  } catch (err) {
+    console.warn("Error al obtener detalle del curso:", err);
+    return null;
   }
 };
 
@@ -42,6 +52,7 @@ export {
   getPostByIdOrSlug, 
   savePost, 
   deletePost, 
+  deleteNews,
   togglePostStatus
 } from './postsService';
 

@@ -7,7 +7,8 @@ export function CoursesTable({
   setSearchTerm,
   onEditCourse,
   onDeleteCourse,
-  onCreateCourse
+  onCreateCourse,
+  onQuickUpdate
 }) {
   return (
     <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl space-y-6 animate-fade-in">
@@ -59,9 +60,9 @@ export function CoursesTable({
             <thead>
               <tr className="border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
                 <th className="py-3 px-2">Portada</th>
-                <th className="py-3 px-2">Título del Curso</th>
+                <th className="py-3 px-2">Título y Profesor</th>
                 <th className="py-3 px-2">Categoría</th>
-                <th className="py-3 px-2">Duración</th>
+                <th className="py-3 px-2">Turno</th>
                 <th className="py-3 px-2">Inversión</th>
                 <th className="py-3 px-2">Inicio</th>
                 <th className="py-3 px-2 text-right">Acciones</th>
@@ -74,6 +75,7 @@ export function CoursesTable({
                   course={course}
                   onEdit={onEditCourse}
                   onDelete={onDeleteCourse}
+                  onQuickUpdate={onQuickUpdate}
                 />
               ))}
             </tbody>

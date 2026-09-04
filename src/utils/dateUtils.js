@@ -284,3 +284,77 @@ export function getCourseStatusBadge(dateStr, endDateStr = '') {
     icon: 'ri-checkbox-circle-line'
   };
 }
+
+/**
+ * Retorna la configuración visual (colores llamativos, ícono, etiqueta) para cada turno.
+ * @param {string} shift - Nombre del turno
+ * @returns {{ label: string, colorClass: string, badgeBg: string, icon: string, dotColor: string, iconColor: string }}
+ */
+export function getShiftBadge(shift = 'Matutino') {
+  const s = (shift || 'Matutino').toLowerCase();
+
+  if (s.includes('vespert')) {
+    return {
+      label: shift || 'Vespertino',
+      colorClass: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800',
+      badgeBg: 'bg-indigo-600 text-white',
+      dotColor: 'bg-indigo-500',
+      iconColor: 'text-indigo-600 dark:text-indigo-400',
+      icon: 'ri-moon-fill'
+    };
+  }
+
+  if (s.includes('sabat')) {
+    return {
+      label: shift || 'Sabatino',
+      colorClass: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800',
+      badgeBg: 'bg-emerald-600 text-white',
+      dotColor: 'bg-emerald-500',
+      iconColor: 'text-emerald-600 dark:text-emerald-400',
+      icon: 'ri-calendar-check-fill'
+    };
+  }
+
+  if (s.includes('domin')) {
+    return {
+      label: shift || 'Dominical',
+      colorClass: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800',
+      badgeBg: 'bg-sky-600 text-white',
+      dotColor: 'bg-sky-500',
+      iconColor: 'text-sky-600 dark:text-sky-400',
+      icon: 'ri-calendar-2-fill'
+    };
+  }
+
+  if (s.includes('mixto') || s.includes('fin de semana')) {
+    return {
+      label: shift || 'Mixto / Fin de Semana',
+      colorClass: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-950/60 dark:text-fuchsia-300 dark:border-fuchsia-800',
+      badgeBg: 'bg-fuchsia-600 text-white',
+      dotColor: 'bg-fuchsia-500',
+      iconColor: 'text-fuchsia-600 dark:text-fuchsia-400',
+      icon: 'ri-calendar-todo-fill'
+    };
+  }
+
+  if (s.includes('especial') || s.includes('flexible')) {
+    return {
+      label: shift || 'Especial / Flexible',
+      colorClass: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800',
+      badgeBg: 'bg-teal-600 text-white',
+      dotColor: 'bg-teal-500',
+      iconColor: 'text-teal-600 dark:text-teal-400',
+      icon: 'ri-time-fill'
+    };
+  }
+
+  // Por defecto: Matutino
+  return {
+    label: shift || 'Matutino',
+    colorClass: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800',
+    badgeBg: 'bg-amber-600 text-white',
+    dotColor: 'bg-amber-500',
+    iconColor: 'text-amber-500 dark:text-amber-400',
+    icon: 'ri-sun-fill'
+  };
+}

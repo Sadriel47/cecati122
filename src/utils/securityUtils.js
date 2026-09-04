@@ -85,8 +85,12 @@ export function validateCourseSchema(data) {
     errors.push("El título no puede exceder 150 caracteres.");
   }
 
-  if (data.duration !== undefined && (isNaN(data.duration) || data.duration < 0)) {
-    errors.push("La duración en horas debe ser un número entero positivo.");
+  if (data.shift !== undefined && typeof data.shift !== 'string') {
+    errors.push("El turno debe ser un texto (Matutino, Vespertino, Sabatino, etc.).");
+  }
+
+  if (data.instructor !== undefined && typeof data.instructor !== 'string') {
+    errors.push("El nombre del profesor(a) debe ser una cadena de texto.");
   }
 
   return {

@@ -1,4 +1,8 @@
+import { getShiftBadge } from '../../utils/dateUtils';
+
 export function CourseSidebarInfo({ selectedCourse, activeTab, setActiveTab }) {
+  const shiftBadge = getShiftBadge(selectedCourse?.shift);
+
   return (
     <div className="lg:col-span-5 space-y-5">
       <div className="p-6 rounded-2xl bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 space-y-5">
@@ -9,16 +13,25 @@ export function CourseSidebarInfo({ selectedCourse, activeTab, setActiveTab }) {
 
         <div className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300 border-t border-b border-gray-200 dark:border-gray-600/60 py-4">
           <div className="flex justify-between items-center">
-            <span className="text-gray-500 dark:text-gray-400">Duración:</span>
-            <strong className="text-gray-900 dark:text-white font-bold">{selectedCourse.duration} horas</strong>
+            <span className="text-gray-500 dark:text-gray-400">Turno:</span>
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-extrabold border ${shiftBadge.colorClass}`}>
+              <i className={`${shiftBadge.icon} ${shiftBadge.iconColor}`}></i>
+              <span>{selectedCourse.shift || 'Matutino'}</span>
+            </span>
           </div>
+          {selectedCourse.instructor && (
+            <div className="flex justify-between items-center">
+              <span className="text-gray-500 dark:text-gray-400">Profesor(a):</span>
+              <strong className="text-gray-900 dark:text-white font-bold">{selectedCourse.instructor}</strong>
+            </div>
+          )}
           <div className="flex justify-between items-center">
             <span className="text-gray-500 dark:text-gray-400">Fecha de Inicio:</span>
-            <strong className="text-gray-900 dark:text-white font-bold">{selectedCourse.startDate}</strong>
+            <strong className="text-gray-900 dark:text-white font-bold">{selectedCourse.formattedPeriod || selectedCourse.startDate}</strong>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-500 dark:text-gray-400">Horario:</span>
-            <strong className="text-gray-900 dark:text-white font-bold">{selectedCourse.schedule}</strong>
+            <strong className="text-gray-900 dark:text-white font-bold text-right ml-2">{selectedCourse.schedule}</strong>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-500 dark:text-gray-400">Requisitos:</span>

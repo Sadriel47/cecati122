@@ -18,6 +18,7 @@ import {
   deleteObject 
 } from 'firebase/storage';
 import { db, storage } from '../firebase/config';
+import { compressImage } from '../utils/imageCompressor';
 
 const POSTS_COLLECTION = 'posts';
 
@@ -33,12 +34,14 @@ export async function seedDefaultPostsToFirestore() {
 export async function uploadPostImage(file) {
   if (!file) return { url: '', path: '' };
 
+  // Optimizar imagen antes de subir
+  const optimizedFile = await compressImage(file);
   const timestamp = Date.now();
-  const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const cleanFileName = optimizedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
   const storagePath = `posts/${timestamp}_${cleanFileName}`;
   const storageRef = ref(storage, storagePath);
 
-  const snapshot = await uploadBytes(storageRef, file);
+  const snapshot = await uploadBytes(storageRef, optimizedFile);
   const downloadUrl = await getDownloadURL(snapshot.ref);
 
   return {
@@ -197,12 +200,30 @@ export async function savePost(postData, imageFile = null) {
 /**
  * Elimina una noticia de Firestore
  */
+/**
+ * Elimina una noticia de Firestore
+ */
 export async function deletePost(id, imageUrl = null) {
   try {
-    if (imageUrl) {
-      await deletePostImage(imageUrl);
-    }
     const docRef = doc(db, POSTS_COLLECTION, id);
+    const docSnap = await getDoc(docRef);
+    let urlToDelete = imageUrl;
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      // Verificar si contiene featuredImage, imageUrl o storagePath
+      urlToDelete = data.featuredImage || data.imageUrl || data.storagePath || urlToDelete;
+    }
+
+    if (urlToDelete && (urlToDelete.includes('firebasestorage.googleapis.com') || urlToDelete.startsWith('gs://') || urlToDelete.startsWith('posts/'))) {
+      try {
+        const imageRef = ref(storage, urlToDelete);
+        await deleteObject(imageRef);
+      } catch (err) {
+        console.warn("No se pudo eliminar la imagen de la noticia de Storage:", err.message);
+      }
+    }
+
     await deleteDoc(docRef);
     return true;
   } catch (error) {
@@ -210,6 +231,8 @@ export async function deletePost(id, imageUrl = null) {
     throw error;
   }
 }
+
+export const deleteNews = deletePost;
 
 /**
  * Cambia el estado (published / draft) de una noticia

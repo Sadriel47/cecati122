@@ -7,7 +7,8 @@ export function CoursesTab({
   setSearchTerm,
   onEditCourse,
   onDeleteCourse,
-  onCreateCourse
+  onCreateCourse,
+  onQuickUpdate
 }) {
   return (
     <CoursesTable
@@ -18,6 +19,7 @@ export function CoursesTab({
       onEditCourse={onEditCourse}
       onDeleteCourse={onDeleteCourse}
       onCreateCourse={onCreateCourse}
+      onQuickUpdate={onQuickUpdate}
     />
   );
 }

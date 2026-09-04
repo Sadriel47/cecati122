@@ -3,11 +3,13 @@ import {
   getDocs,
   getDoc,
   doc,
+  addDoc,
   setDoc,
   updateDoc,
   deleteDoc,
   query,
   where,
+  limit,
   serverTimestamp
 } from 'firebase/firestore';
 import {
@@ -17,8 +19,19 @@ import {
   deleteObject
 } from 'firebase/storage';
 import { db, storage } from '../firebase/config';
+import { compressImage } from '../utils/imageCompressor';
 
 const COURSES_COLLECTION = 'courses';
+
+// Memoria caché para cursos en cliente
+let coursesCache = {};
+let cacheTimestamps = {};
+const CACHE_TTL_MS = 12 * 60 * 1000; // 12 minutos de tiempo de vida (TTL)
+
+export function clearCoursesCache() {
+  coursesCache = {};
+  cacheTimestamps = {};
+}
 
 export const defaultCourses = [];
 
@@ -34,17 +47,39 @@ export async function seedDefaultCoursesToFirestore() {
 export async function uploadCourseImage(file) {
   if (!file) return { url: '', path: '' };
 
+  // Optimizar imagen antes de subir
+  const optimizedFile = await compressImage(file);
   const timestamp = Date.now();
-  const cleanFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+  const cleanFileName = optimizedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
   const storagePath = `courses/${timestamp}_${cleanFileName}`;
   const storageRef = ref(storage, storagePath);
 
-  const snapshot = await uploadBytes(storageRef, file);
-  const downloadUrl = await getDownloadURL(snapshot.ref);
+  try {
+    const snapshot = await Promise.race([
+      uploadBytes(storageRef, optimizedFile),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout de subida de imagen: el servidor tardó demasiado en responder')), 15000))
+    ]);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
 
-  return {
-    url: downloadUrl,
-    path: storagePath,
+    return {
+      url: downloadUrl,
+      path: storagePath,
+    };
+  } catch (error) {
+    console.error("Error subiendo imagen:", error);
+    throw error;
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.testUpload = async () => {
+    try {
+      const fakeFile = new File(['hello'], 'test.png', { type: 'image/png' });
+      await uploadCourseImage(fakeFile);
+      document.body.setAttribute('data-test-error', 'success');
+    } catch (e) {
+      document.body.setAttribute('data-test-error', e.toString());
+    }
   };
 }
 
@@ -69,30 +104,69 @@ export async function deleteCourseImage(storagePathOrUrl) {
 }
 
 /**
- * Obtiene todos los cursos desde Firestore, opcionalmente filtrados por categoría.
+ * Obtiene todos los cursos desde Firestore, opcionalmente filtrados por categoría y/o vista pública.
  * @param {string} [category] - Filtro de categoría
+ * @param {boolean} [publicOnly] - Si es true, solo trae cursos activos y limita el resultado
  * @returns {Promise<Array<Object>>}
  */
-export async function getCourses(category = 'todos') {
+export async function getCourses(category = 'todos', publicOnly = false) {
+  const cacheKey = `${category}_${publicOnly}`;
+  const now = Date.now();
+
+  // Retornar desde la caché si el TTL sigue siendo válido
+  if (coursesCache[cacheKey] && cacheTimestamps[cacheKey] && (now - cacheTimestamps[cacheKey] < CACHE_TTL_MS)) {
+    return coursesCache[cacheKey];
+  }
+
   try {
     const coursesRef = collection(db, COURSES_COLLECTION);
-    let q;
+    const constraints = [];
 
-    if (category && category !== 'todos') {
-      q = query(coursesRef, where('category', '==', category));
-    } else {
-      q = query(coursesRef);
+    // Vista pública: Solo activos y limitar la carga inicial para cuidar cuotas
+    if (publicOnly) {
+      constraints.push(where('status', '==', 'active'));
+      constraints.push(limit(24));
     }
 
-    const querySnapshot = await getDocs(q);
+    if (category && category !== 'todos') {
+      constraints.push(where('category', '==', category));
+    }
+
+    const q = query(coursesRef, ...constraints);
+    let querySnapshot = await getDocs(q);
+
+    // Fallback de seguridad: si la consulta filtrada pública retorna vacío, reintentar sin status para migración
+    if (publicOnly && querySnapshot.empty) {
+      const fallbackConstraints = [limit(24)];
+      if (category && category !== 'todos') {
+        fallbackConstraints.push(where('category', '==', category));
+      }
+      const fallbackQ = query(coursesRef, ...fallbackConstraints);
+      querySnapshot = await getDocs(fallbackQ);
+    }
+
     const courses = [];
+    
     querySnapshot.forEach((docSnap) => {
-      courses.push({ id: docSnap.id, ...docSnap.data() });
+      const data = docSnap.data();
+      // Migración on-the-fly: si el curso no tiene status, lo actualizamos a 'active'
+      if (data.status === undefined) {
+        const docRef = doc(db, COURSES_COLLECTION, docSnap.id);
+        updateDoc(docRef, { status: 'active' }).catch(err => 
+          console.warn(`Error al migrar status para curso ${docSnap.id}:`, err.message)
+        );
+        data.status = 'active';
+      }
+      courses.push({ id: docSnap.id, ...data });
     });
 
     if (!category || category === 'todos') {
       localStorage.setItem('cecati_course_count', courses.length.toString());
     }
+
+    // Almacenar en la caché local
+    coursesCache[cacheKey] = courses;
+    cacheTimestamps[cacheKey] = now;
 
     return courses;
   } catch (error) {
@@ -158,9 +232,10 @@ export async function saveCourse(courseData, imageFile = null) {
 
     const payload = {
       title: courseData.title,
-      category: courseData.category,
-      duration: Number(courseData.duration) || 0,
-      startDate: courseData.startDate || '',
+      category: String(courseData.category || 'tecnologia'),
+      shift: String(courseData.shift || 'Matutino'),
+      instructor: String(courseData.instructor || ''),
+      startDate: String(courseData.startDate || ''),
       endDate: courseData.endDate || '',
       formattedPeriod: courseData.formattedPeriod || '',
       schedules: courseData.schedules || [],
@@ -171,8 +246,12 @@ export async function saveCourse(courseData, imageFile = null) {
       profile: courseData.profile || '',
       syllabus: courseData.syllabus || [],
       payments: courseData.payments || [],
+      status: courseData.status || 'active', // Guardar estado por defecto activo
       updatedAt: serverTimestamp(),
     };
+
+    // Invalidar caché
+    clearCoursesCache();
 
     if (courseData.id) {
       const docRef = doc(db, COURSES_COLLECTION, courseData.id);
@@ -196,11 +275,28 @@ export async function saveCourse(courseData, imageFile = null) {
  */
 export async function deleteCourse(id, imageUrl = null) {
   try {
-    if (imageUrl) {
-      await deleteCourseImage(imageUrl);
+    const docRef = doc(db, COURSES_COLLECTION, id);
+    const docSnap = await getDoc(docRef);
+    let urlToDelete = imageUrl;
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      // Verificar si contiene imageUrl, storagePath, o image
+      urlToDelete = data.image || data.imageUrl || data.storagePath || urlToDelete;
     }
 
-    const docRef = doc(db, COURSES_COLLECTION, id);
+    if (urlToDelete && (urlToDelete.includes('firebasestorage.googleapis.com') || urlToDelete.startsWith('gs://') || urlToDelete.startsWith('courses/'))) {
+      try {
+        const imageRef = ref(storage, urlToDelete);
+        await deleteObject(imageRef);
+      } catch (err) {
+        console.warn("No se pudo eliminar la imagen de Storage:", err.message);
+      }
+    }
+
+    // Invalidar caché
+    clearCoursesCache();
+
     await deleteDoc(docRef);
     return true;
   } catch (error) {

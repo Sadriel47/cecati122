@@ -51,7 +51,7 @@ export function HeroSection({ totalCount }) {
 
           {/* Title */}
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight text-white">
-            Impulsa tu futuro laboral en el <span className="bg-gradient-to-r from-white via-red-200 to-red-400 bg-clip-text text-transparent">CECATI 122</span>
+            Inscripciones abiertas <span className="bg-gradient-to-r from-white via-red-200 to-red-400 bg-clip-text text-transparent">CECATI 122</span>
           </h1>
 
           {/* Description */}
@@ -67,14 +67,6 @@ export function HeroSection({ totalCount }) {
             >
               <span>Explorar Cursos</span>
               <i className="ri-arrow-right-line text-lg"></i>
-            </Link>
-
-            <Link
-              to="/nosotros"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold text-sm sm:text-base hover:bg-white/20 hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <span>Conóce el Plantel</span>
-              <i className="ri-information-line text-lg"></i>
             </Link>
           </div>
 

@@ -1,4 +1,5 @@
 import { CourseCard } from './CourseCard';
+import { CourseCardSkeleton } from './CourseCardSkeleton';
 
 export function CourseGrid({
   filteredCourses,
@@ -24,9 +25,10 @@ export function CourseGrid({
         </div>
 
         {loading ? (
-          <div className="text-center py-16 space-y-3">
-            <i className="ri-loader-4-line ri-spin text-4xl text-cecati block"></i>
-            <p className="text-sm font-bold text-gray-500">Cargando oferta educativa...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <CourseCardSkeleton key={idx} />
+            ))}
           </div>
         ) : filteredCourses.length === 0 ? (
           <div className="text-center py-16 space-y-3 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-3xl p-8 border border-gray-100 dark:border-gray-700 shadow-sm">

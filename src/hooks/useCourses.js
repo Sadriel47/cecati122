@@ -35,14 +35,16 @@ export function useCourses({ showToast, onCourseMutated }) {
     const term = searchTerm.toLowerCase();
     return courses.filter(c =>
       c.title.toLowerCase().includes(term) ||
-      c.category.toLowerCase().includes(term)
+      c.category.toLowerCase().includes(term) ||
+      (c.instructor && c.instructor.toLowerCase().includes(term)) ||
+      (c.shift && c.shift.toLowerCase().includes(term))
     );
   }, [courses, searchTerm]);
 
   const totalCourses = courses.length;
 
-  const totalHours = useMemo(() => {
-    return courses.reduce((acc, c) => acc + (Number(c.duration) || 0), 0);
+  const morningShiftsCount = useMemo(() => {
+    return courses.reduce((acc, c) => acc + (c.shift === 'Matutino' ? 1 : 0), 0);
   }, [courses]);
 
   const avgCost = useMemo(() => {
@@ -58,7 +60,8 @@ export function useCourses({ showToast, onCourseMutated }) {
     currentCourse,
     formTitle,
     formCategory,
-    formDuration,
+    formShift,
+    formInstructor,
     formStartDate,
     formEndDate,
     formSchedules,
@@ -76,6 +79,7 @@ export function useCourses({ showToast, onCourseMutated }) {
     }
 
     const sanitizedTitle = sanitizeInput(formTitle);
+    const sanitizedInstructor = sanitizeInput(formInstructor || '');
     const sanitizedReq = sanitizeInput(formRequirements);
     const sanitizedPrice = sanitizeInput(formPrice);
     const sanitizedProfile = sanitizeInput(formProfile);
@@ -91,7 +95,8 @@ export function useCourses({ showToast, onCourseMutated }) {
     const courseData = {
       title: sanitizedTitle,
       category: formCategory,
-      duration: parseInt(formDuration, 10) || 0,
+      shift: formShift || 'Matutino',
+      instructor: sanitizedInstructor,
       startDate: formStartDate,
       endDate: formEndDate,
       formattedPeriod: formattedPeriod,
@@ -144,6 +149,22 @@ export function useCourses({ showToast, onCourseMutated }) {
     }
   };
 
+  const handleQuickUpdateCourse = async (courseToUpdate) => {
+    setSavingCourse(true);
+    try {
+      await saveCourse(courseToUpdate, null);
+      showToast?.("Curso actualizado con éxito");
+      await fetchCourses();
+      return true;
+    } catch (err) {
+      console.error("Error en quick update:", err);
+      showToast?.("Error al actualizar", "error");
+      return false;
+    } finally {
+      setSavingCourse(false);
+    }
+  };
+
   return {
     courses,
     loading,
@@ -152,10 +173,11 @@ export function useCourses({ showToast, onCourseMutated }) {
     setSearchTerm,
     filteredCourses,
     totalCourses,
-    totalHours,
+    morningShiftsCount,
     avgCost,
     fetchCourses,
     handleSaveCourse,
-    handleDeleteCourse
+    handleDeleteCourse,
+    handleQuickUpdateCourse
   };
 }
