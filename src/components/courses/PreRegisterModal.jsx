@@ -33,18 +33,38 @@ export function PreRegisterModal({
   handleRegisterSubmit
 }) {
   const contentRef = useRef(null);
+  const modalOverlayRef = useRef(null);
+  const topAnchorRef = useRef(null);
 
-  // Auto-scroll al inicio del contenedor cuando cambia la pestaña (especialmente en móviles)
-  useEffect(() => {
+  // Función robusta para desplazarse al inicio del formulario/modal en móviles y escritorio
+  const scrollToTop = () => {
     if (contentRef.current) {
+      contentRef.current.scrollTop = 0;
       contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [activeTab]);
+    if (modalOverlayRef.current) {
+      modalOverlayRef.current.scrollTop = 0;
+      modalOverlayRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (topAnchorRef.current) {
+      topAnchorRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Se activa al abrir el modal, al cambiar de curso o al cambiar de pestaña (ej. a 'register')
+  useEffect(() => {
+    if (selectedCourse) {
+      scrollToTop();
+      const timer = setTimeout(scrollToTop, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, selectedCourse]);
 
   if (!selectedCourse) return null;
 
   return (
     <div
+      ref={modalOverlayRef}
       className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-y-auto animate-fade-in"
       onClick={onClose}
     >
@@ -52,6 +72,9 @@ export function PreRegisterModal({
         className="relative w-full h-[100dvh] sm:h-auto sm:max-h-[92vh] max-w-5xl bg-white dark:bg-gray-800 rounded-none sm:rounded-3xl overflow-hidden shadow-2xl border-0 sm:border border-gray-200 dark:border-gray-700 flex flex-col my-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Ancla superior para scroll en móviles */}
+        <div ref={topAnchorRef} className="absolute top-0 left-0 w-full h-0 pointer-events-none" />
+
         {/* Header con Imagen */}
         <div className="relative h-36 sm:h-52 overflow-hidden shrink-0">
           <img
@@ -112,4 +135,5 @@ export function PreRegisterModal({
     </div>
   );
 }
+
 

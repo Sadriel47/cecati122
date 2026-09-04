@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { RegistrationSuccessState } from './RegistrationSuccessState';
 
 export function PreRegisterForm({
@@ -13,8 +14,16 @@ export function PreRegisterForm({
   submittingReg,
   handleRegisterSubmit
 }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
   return (
-    <div className="p-5 sm:p-6 rounded-3xl bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 space-y-4 animate-fade-in">
+    <div ref={containerRef} className="p-5 sm:p-6 rounded-3xl bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 space-y-4 animate-fade-in">
       {registerSuccess ? (
         <RegistrationSuccessState
           lastRegistered={lastRegistered}
