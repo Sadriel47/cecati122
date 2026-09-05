@@ -1,34 +1,6 @@
 import { memo } from 'react';
 import { formatCourseDate, getCourseStatusBadge, getShiftBadge } from '../../utils/dateUtils';
-
-function getCategoryIcon(cat) {
-  if (!cat) return 'ri-book-open-line';
-  switch (cat.toLowerCase()) {
-    case 'tecnologia': return 'ri-computer-line';
-    case 'textil': return 'ri-shirt-line';
-    case 'gastronomia': return 'ri-cake-3-line';
-    case 'administracion': return 'ri-briefcase-line';
-    case 'automotriz': return 'ri-tools-line';
-    case 'estilismo': return 'ri-scissors-line';
-    case 'idiomas': return 'ri-global-line';
-    default: return 'ri-book-open-line';
-  }
-}
-
-function getCategoryLabel(cat) {
-  if (!cat) return 'General';
-  switch (cat.toLowerCase()) {
-    case 'tecnologia': return 'Tecnología';
-    case 'textil': return 'Textil';
-    case 'gastronomia': return 'Gastronomía';
-    case 'administracion': return 'Administración';
-    case 'automotriz': return 'Automotriz';
-    case 'estilismo': return 'Estilismo y Belleza';
-    case 'idiomas': return 'Idiomas';
-    default:
-      return cat.charAt(0).toUpperCase() + cat.slice(1);
-  }
-}
+import { getCategoryLabel, getCategoryIcon } from '../../utils/searchUtils';
 
 export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
   const statusBadge = getCourseStatusBadge(course.startDate, course.endDate);
@@ -39,9 +11,30 @@ export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
     rawImg += '&w=400&q=75&auto=format';
   }
 
+  const handleCardClick = () => {
+    if (onOpenDetails) {
+      onOpenDetails(course);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleCardClick();
+    }
+  };
+
   return (
-    <article className="cv-auto-card group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+    <article
+      onClick={handleCardClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver detalles del curso ${course.title}`}
+      className="cv-auto-card group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700/80 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-cecati"
+    >
       <div>
+        {/* Imagen de Portada con Badge de Estado y Especialidad */}
         <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700">
           <img
             src={rawImg}
@@ -71,6 +64,7 @@ export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
           </div>
         </div>
 
+        {/* Información del Curso */}
         <div className="p-5 space-y-3">
           <h3 className="text-lg font-black text-gray-900 dark:text-white group-hover:text-cecati dark:group-hover:text-red-400 transition-colors leading-snug">
             {course.title}
@@ -78,7 +72,7 @@ export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
 
           <div className="space-y-2.5 text-xs text-gray-600 dark:text-gray-300 pt-1">
             <div className="flex items-center justify-between gap-2">
-              {/* Insignia de Turno con Color Distintivo */}
+              {/* Insignia de Turno */}
               <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-extrabold shadow-2xs ${shiftBadge.colorClass}`}>
                 <i className={`${shiftBadge.icon} ${shiftBadge.iconColor} text-sm`}></i>
                 <span>{course.shift || 'Matutino'}</span>
@@ -104,14 +98,14 @@ export const CourseCard = memo(function CourseCard({ course, onOpenDetails }) {
         </div>
       </div>
 
+      {/* Botón de Acción */}
       <div className="p-5 pt-0">
-        <button
-          onClick={() => onOpenDetails(course)}
-          className="w-full py-3.5 rounded-xl bg-cecati hover:bg-cecati-hover text-white font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+        <div
+          className="w-full py-3.5 rounded-xl bg-cecati group-hover:bg-cecati-hover text-white font-bold text-sm shadow-md group-hover:shadow-lg group-hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 pointer-events-none"
         >
           <span>Ver Detalles e Inscribirme</span>
           <i className="ri-arrow-right-line"></i>
-        </button>
+        </div>
       </div>
     </article>
   );

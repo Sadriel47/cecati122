@@ -21,8 +21,8 @@ export default function Home() {
     document.title = "CECATI 122 - Inicio";
     const fetchData = async () => {
       try {
-        const data = await getCourses();
-        setCourses(data.slice(0, 3));
+        const data = await getCourses('todos', true);
+        setCourses(data);
         const count = await getCourseCount();
         setTotalCount(count);
 

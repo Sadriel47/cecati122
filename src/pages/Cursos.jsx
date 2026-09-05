@@ -5,6 +5,7 @@ import { useCourseRegistration } from '../hooks/useCourseRegistration';
 import { CourseFilters } from '../components/courses/CourseFilters';
 import { CourseGrid } from '../components/courses/CourseGrid';
 import { PreRegisterModal } from '../components/courses/PreRegisterModal';
+import { courseMatchesSearch } from '../utils/searchUtils';
 
 export default function Cursos() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -60,15 +61,10 @@ export default function Cursos() {
   useEffect(() => {
     let result = courses;
     if (category !== 'todos') {
-      result = result.filter(c => c.category === category);
+      result = result.filter(c => (c.category || '').toLowerCase() === category.toLowerCase());
     }
     if (searchTerm.trim() !== '') {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(c =>
-        c.title.toLowerCase().includes(term) ||
-        (c.profile && c.profile.toLowerCase().includes(term)) ||
-        (c.schedule && c.schedule.toLowerCase().includes(term))
-      );
+      result = result.filter(c => courseMatchesSearch(c, searchTerm));
     }
     setFilteredCourses(result);
   }, [category, searchTerm, courses]);
@@ -105,12 +101,14 @@ export default function Cursos() {
   };
 
   return (
-    <main className="main overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-300">
+    <main className="main min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
       <CourseFilters
         category={category}
         setCategory={setCategory}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        courses={courses}
+        onSelectCourse={handleOpenDetails}
       />
 
       <CourseGrid

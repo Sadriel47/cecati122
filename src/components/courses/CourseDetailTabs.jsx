@@ -34,8 +34,8 @@ export function CourseDetailTabs({
 
   return (
     <div className="lg:col-span-7 space-y-6">
-      {/* Navegación por pestañas móvil-friendly */}
-      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-gray-200 dark:border-gray-700">
+      {/* Navegación por pestañas móvil-friendly con scrollbar estilizada */}
+      <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 custom-scrollbar border-b border-gray-200 dark:border-gray-700">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (

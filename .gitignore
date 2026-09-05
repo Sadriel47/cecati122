@@ -35,6 +35,11 @@ serviceAccountKey.json
 secrets.json
 credentials.json
 
+# Scripts y utilidades locales
+scripts/
+scripts
+
+
 # Archivos de Editores e IDE
 .vscode/*
 !.vscode/extensions.json

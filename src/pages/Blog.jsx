@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getPosts } from '../services/postsService';
 import { NewsCardSkeleton } from '../components/blog/NewsCardSkeleton';
+import { normalizeText } from '../utils/searchUtils';
 
 const CATEGORIES = [
   'Todas',
@@ -35,18 +36,20 @@ export default function Blog() {
   };
 
   const matchesCategory = (post) => {
-    if (!selectedCategory || selectedCategory === 'Todas' || selectedCategory.toLowerCase() === 'all') {
+    if (!selectedCategory || selectedCategory === 'Todas' || normalizeText(selectedCategory) === 'all') {
       return true;
     }
-    return (post.category?.toLowerCase() || '') === selectedCategory.toLowerCase();
+    return normalizeText(post.category) === normalizeText(selectedCategory);
   };
 
   const matchesSearch = (post) => {
-    const query = (searchTerm || '').trim().toLowerCase();
+    const query = normalizeText(searchTerm);
     if (!query) return true;
     return (
-      (post.title?.toLowerCase() || '').includes(query) ||
-      (post.content?.toLowerCase() || post.summary?.toLowerCase() || post.excerpt?.toLowerCase() || '').includes(query)
+      normalizeText(post.title).includes(query) ||
+      normalizeText(post.content || post.summary || post.excerpt).includes(query) ||
+      normalizeText(post.category).includes(query) ||
+      normalizeText(post.author).includes(query)
     );
   };
 

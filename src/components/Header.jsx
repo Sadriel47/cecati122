@@ -76,9 +76,13 @@ export default function Header() {
 
   return (
     <header className={`header ${isScrolled ? 'bg-header shadow-md' : ''} fixed top-0 w-full z-50 transition-all duration-300`} id="header">
-      <nav className="nav flex items-center justify-between w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="nav__logo" onClick={closeMenu}>
-          <img src="/assets/img/logo-cecati.webp" alt="Logo CECATI 122" />
+      <nav className="nav flex items-center justify-between w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+        <Link to="/" className="nav__logo flex items-center py-1 group" onClick={closeMenu}>
+          <img
+            src="/assets/img/logo-cecati.webp"
+            alt="Logo CECATI 122"
+            className="h-10 sm:h-12 md:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
 
         <div className={`nav__menu ${showMenu ? 'absolute top-full left-4 right-4 mt-2 p-5 rounded-2xl bg-zinc-950/95 backdrop-blur-xl border border-white/10 shadow-2xl flex flex-col gap-4 z-50 md:hidden' : 'max-md:hidden'}`} id="nav-menu">

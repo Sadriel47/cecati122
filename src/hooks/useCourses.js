@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getCourses, saveCourse, deleteCourse } from '../services/db';
 import { rateLimitCheck, sanitizeInput, validateCourseSchema } from '../utils/securityUtils';
 import { formatDateRange, formatCourseDate, formatSchedulesToString } from '../utils/dateUtils';
+import { courseMatchesSearch } from '../utils/searchUtils';
 
 /**
  * Custom hook para la gestión reactiva de cursos y mutaciones con Firebase.
@@ -32,13 +33,7 @@ export function useCourses({ showToast, onCourseMutated }) {
 
   const filteredCourses = useMemo(() => {
     if (!searchTerm.trim()) return courses;
-    const term = searchTerm.toLowerCase();
-    return courses.filter(c =>
-      c.title.toLowerCase().includes(term) ||
-      c.category.toLowerCase().includes(term) ||
-      (c.instructor && c.instructor.toLowerCase().includes(term)) ||
-      (c.shift && c.shift.toLowerCase().includes(term))
-    );
+    return courses.filter(c => courseMatchesSearch(c, searchTerm));
   }, [courses, searchTerm]);
 
   const totalCourses = courses.length;

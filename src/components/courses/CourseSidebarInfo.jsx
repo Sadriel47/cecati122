@@ -37,15 +37,6 @@ export function CourseSidebarInfo({ selectedCourse, activeTab, setActiveTab }) {
             <span className="text-gray-500 dark:text-gray-400">Horario:</span>
             <strong className="text-gray-900 dark:text-white font-bold text-right ml-2">{selectedCourse.schedule}</strong>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-500 dark:text-gray-400">Requisitos:</span>
-            <button
-              onClick={() => setActiveTab('requirements')}
-              className="text-cecati dark:text-red-400 font-extrabold hover:underline text-right ml-2"
-            >
-              {selectedCourse.requirements || 'Copias (Acta, CURP, etc.)'}
-            </button>
-          </div>
         </div>
 
         <div className="space-y-2.5 pt-1">

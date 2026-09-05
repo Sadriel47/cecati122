@@ -60,7 +60,7 @@ export default function Nosotros() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-8 space-y-4 text-gray-600 dark:text-gray-300 text-base leading-relaxed">
+              <div className="lg:col-span-7 space-y-4 text-gray-600 dark:text-gray-300 text-base leading-relaxed">
                 <p>
                   La <strong className="text-gray-900 dark:text-white font-semibold">Dirección General de Centros de Formación para el Trabajo (DGCFT)</strong> es una Unidad Administrativa adscrita a la Subsecretaría de Educación Media Superior (SEMS) de la Secretaría de Educación Pública (SEP), ofreciendo capacitación oficial desde 1963.
                 </p>
@@ -69,9 +69,16 @@ export default function Nosotros() {
                 </p>
               </div>
 
-              <div className="lg:col-span-4 flex justify-center">
-                <div className="p-6 rounded-2xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-700 flex items-center justify-center max-w-xs w-full shadow-inner">
-                  <img src="/assets/img/dgcft.png" alt="Logotipo Oficial DGCFT" className="max-h-24 object-contain" />
+              <div className="lg:col-span-5 flex justify-center items-center">
+                <div className="p-8 sm:p-10 rounded-3xl bg-gray-50 dark:bg-gray-700/40 border border-gray-100 dark:border-gray-700 flex flex-col items-center justify-center max-w-sm w-full shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <img
+                    src="/assets/img/dgcft.png"
+                    alt="Logotipo Oficial DGCFT"
+                    className="w-full h-36 sm:h-48 object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span className="mt-4 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest text-center">
+                    DGCFT • SEMS • SEP
+                  </span>
                 </div>
               </div>
             </div>
@@ -126,7 +133,7 @@ export default function Nosotros() {
             {/* Misión */}
             <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700/60 space-y-4 hover:shadow-2xl transition-all duration-300">
               <div className="w-14 h-14 rounded-2xl bg-red-50 dark:bg-red-900/30 text-[var(--cecati-color)] dark:text-red-400 flex items-center justify-center text-3xl font-bold">
-                <i className="ri-flag-3-line"></i>
+                <i className="ri-flag-2-line"></i>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Misión</h3>
               <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">

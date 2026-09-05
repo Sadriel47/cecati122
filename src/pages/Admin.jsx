@@ -235,7 +235,7 @@ export default function Admin() {
         <FirebaseQuotaMonitor storageInfo={storageInfo} onRefresh={fetchStorageInfo} />
 
         {/* NAVEGACIÓN DE PESTAÑAS */}
-        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2 overflow-x-auto">
+        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-3 overflow-x-auto custom-scrollbar">
           <button onClick={() => setAdminTab('courses')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'courses' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
             <i className="ri-book-open-line"></i>
             <span>Catálogo de Cursos ({totalCourses})</span>

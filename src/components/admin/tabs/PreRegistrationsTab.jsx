@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { PreregistrationCleanup } from '../PreregistrationCleanup';
+import { normalizeText } from '../../../utils/searchUtils';
 
 export function PreRegistrationsTab({
   registrations,
@@ -17,15 +18,15 @@ export function PreRegistrationsTab({
       // Filtro de estado
       const matchesStatus = statusFilter === 'ALL' || (reg.status || 'PENDIENTE').toUpperCase() === statusFilter.toUpperCase();
       
-      // Búsqueda por texto libre
-      const search = searchTerm.trim().toLowerCase();
+      // Búsqueda por texto libre insensible a acentos y mayúsculas
+      const search = normalizeText(searchTerm);
       if (!search) return matchesStatus;
 
       const matchesSearch = 
-        (reg.fullName || '').toLowerCase().includes(search) ||
-        (reg.phone || '').toLowerCase().includes(search) ||
-        (reg.email || '').toLowerCase().includes(search) ||
-        (reg.courseTitle || '').toLowerCase().includes(search);
+        normalizeText(reg.fullName).includes(search) ||
+        normalizeText(reg.phone).includes(search) ||
+        normalizeText(reg.email).includes(search) ||
+        normalizeText(reg.courseTitle).includes(search);
 
       return matchesStatus && matchesSearch;
     });

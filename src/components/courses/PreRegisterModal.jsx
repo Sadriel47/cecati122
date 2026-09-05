@@ -65,7 +65,7 @@ export function PreRegisterModal({
   return (
     <div
       ref={modalOverlayRef}
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 overflow-y-auto custom-scrollbar animate-fade-in"
       onClick={onClose}
     >
       <div
@@ -107,8 +107,8 @@ export function PreRegisterModal({
           </div>
         </div>
 
-        {/* Cuerpo del Modal con scroll suave */}
-        <div ref={contentRef} className="p-4 sm:p-8 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+        {/* Cuerpo del Modal con scroll suave y barra personalizada */}
+        <div ref={contentRef} className="p-4 sm:p-8 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 custom-scrollbar">
           <CourseDetailTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}

@@ -4,10 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview",
-    "seed:courses": "node scripts/seed-courses.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "firebase": "^12.15.0",
