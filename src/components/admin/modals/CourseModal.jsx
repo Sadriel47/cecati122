@@ -67,177 +67,182 @@ export function CourseModal({
         </div>
 
         {/* Modal Form Content */}
-        <form onSubmit={onSubmit} className="p-6 sm:p-8 overflow-y-auto space-y-6 text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
 
-          {/* Fila 1: Título del Curso y Costo */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-2 space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Título del Curso *</label>
-              <input
-                type="text"
-                placeholder="Ej. Mantenimiento Automotriz y Diagnóstico"
-                value={formTitle}
-                onChange={(e) => setFormTitle(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
+          {/* Scrollable Form Body */}
+          <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-gray-700 dark:text-gray-300 text-xs sm:text-sm flex-1 custom-scrollbar">
+
+            {/* Fila 1: Título del Curso y Costo */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-2 space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Título del Curso *</label>
+                <input
+                  type="text"
+                  placeholder="Ej. Mantenimiento Automotriz y Diagnóstico"
+                  value={formTitle}
+                  onChange={(e) => setFormTitle(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Costo de Inversión *</label>
+                <input
+                  type="text"
+                  placeholder="Ej. $1,200 MXN"
+                  value={formPrice}
+                  onChange={(e) => setFormPrice(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Costo de Inversión *</label>
-              <input
-                type="text"
-                placeholder="Ej. $1,200 MXN"
-                value={formPrice}
-                onChange={(e) => setFormPrice(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
-            </div>
-          </div>
+            {/* Fila 2: Categoría, Turno, Profesor(a) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Categoría *</label>
+                <select
+                  value={formCategory}
+                  onChange={(e) => setFormCategory(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                >
+                  <option value="tecnologia">Tecnología</option>
+                  <option value="textil">Textil</option>
+                  <option value="gastronomia">Gastronomía</option>
+                  <option value="administracion">Administración</option>
+                  <option value="automotriz">Automotriz</option>
+                  <option value="estilismo">Estilismo y Belleza</option>
+                  <option value="idiomas">Idiomas</option>
+                </select>
+              </div>
 
-          {/* Fila 2: Categoría, Turno, Profesor(a) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Categoría *</label>
-              <select
-                value={formCategory}
-                onChange={(e) => setFormCategory(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              >
-                <option value="tecnologia">Tecnología</option>
-                <option value="textil">Textil</option>
-                <option value="gastronomia">Gastronomía</option>
-                <option value="administracion">Administración</option>
-                <option value="automotriz">Automotriz</option>
-                <option value="estilismo">Estilismo y Belleza</option>
-                <option value="idiomas">Idiomas</option>
-              </select>
-            </div>
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Turno *</label>
+                <select
+                  value={formShift}
+                  onChange={(e) => setFormShift(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                >
+                  <option value="Matutino">Matutino</option>
+                  <option value="Vespertino">Vespertino</option>
+                  <option value="Sabatino">Sabatino</option>
+                  <option value="Dominical">Dominical</option>
+                  <option value="Mixto / Fin de Semana">Mixto / Fin de Semana</option>
+                  <option value="Especial / Flexible">Especial / Flexible</option>
+                </select>
+              </div>
 
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Turno *</label>
-              <select
-                value={formShift}
-                onChange={(e) => setFormShift(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              >
-                <option value="Matutino">Matutino</option>
-                <option value="Vespertino">Vespertino</option>
-                <option value="Sabatino">Sabatino</option>
-                <option value="Dominical">Dominical</option>
-                <option value="Mixto / Fin de Semana">Mixto / Fin de Semana</option>
-                <option value="Especial / Flexible">Especial / Flexible</option>
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                <i className="ri-user-star-line text-cecati"></i>
-                <span>Profesor(a) / Instructor(a)</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Ej. Ing. Juan Morales"
-                value={formInstructor}
-                onChange={(e) => setFormInstructor(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
-            </div>
-          </div>
-
-          {/* Fila 3: Fecha Inicio y Fecha Término */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Fecha de Inicio *</label>
-              <input
-                type="date"
-                value={formStartDate}
-                onChange={(e) => setFormStartDate(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati [color-scheme:dark]"
-              />
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                  <i className="ri-user-star-line text-cecati"></i>
+                  <span>Profesor(a) / Instructor(a)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Ing. Juan Morales"
+                  value={formInstructor}
+                  onChange={(e) => setFormInstructor(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Fecha de Término</label>
-              <input
-                type="date"
-                value={formEndDate}
-                min={formStartDate}
-                onChange={(e) => setFormEndDate(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati [color-scheme:dark]"
-              />
-            </div>
-          </div>
+            {/* Fila 3: Fecha Inicio y Fecha Término */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Fecha de Inicio *</label>
+                <input
+                  type="date"
+                  value={formStartDate}
+                  onChange={(e) => setFormStartDate(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati [color-scheme:dark]"
+                />
+              </div>
 
-          {/* Selector Estructurado de Horarios (Full-Width Minimalista) */}
-          <ScheduleSelector
-            formSchedules={formSchedules}
-            setFormSchedules={setFormSchedules}
-            onAddRule={handleAddScheduleRule}
-            onRemoveRule={handleRemoveScheduleRule}
-            onToggleDay={handleToggleScheduleDay}
-            onUpdateTime={handleUpdateScheduleTime}
-          />
-
-          {/* Requirements & Image (Cloud Storage Upload + URL Option) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white">Requisitos de Ingreso</label>
-              <input
-                type="text"
-                placeholder="Ej. Copia de Acta, CURP, Comp. estudios/domicilio, 2 fotos y pago Banorte 1056897860"
-                value={formRequirements}
-                onChange={(e) => setFormRequirements(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Fecha de Término</label>
+                <input
+                  type="date"
+                  value={formEndDate}
+                  min={formStartDate}
+                  onChange={(e) => setFormEndDate(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati [color-scheme:dark]"
+                />
+              </div>
             </div>
 
-            {/* URL de Imagen de Portada */}
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                <i className="ri-image-line text-cecati"></i>
-                <span>URL de la Imagen de Portada</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Pega una URL de imagen (https://...)"
-                value={formImage}
-                onChange={(e) => setFormImage(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
-            </div>
-          </div>
-
-          {/* Perfil de Egreso */}
-          <div className="space-y-1">
-            <label className="font-bold text-gray-900 dark:text-white">Perfil de Egreso / ¿Qué aprenderá el alumno?</label>
-            <textarea
-              placeholder="Describe las competencias profesionales obtenidas al finalizar el curso..."
-              value={formProfile}
-              onChange={(e) => setFormProfile(e.target.value)}
-              rows="3"
-              required
-              className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+            {/* Selector Estructurado de Horarios (Full-Width Minimalista) */}
+            <ScheduleSelector
+              formSchedules={formSchedules}
+              setFormSchedules={setFormSchedules}
+              onAddRule={handleAddScheduleRule}
+              onRemoveRule={handleRemoveScheduleRule}
+              onToggleDay={handleToggleScheduleDay}
+              onUpdateTime={handleUpdateScheduleTime}
             />
+
+            {/* Requirements & Image (Cloud Storage Upload + URL Option) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white">Requisitos de Ingreso</label>
+                <input
+                  type="text"
+                  placeholder="Ej. Copia de Acta, CURP, Comp. estudios/domicilio, 2 fotos y pago Banorte 1056897860"
+                  value={formRequirements}
+                  onChange={(e) => setFormRequirements(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+
+              {/* URL de Imagen de Portada */}
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                  <i className="ri-image-line text-cecati"></i>
+                  <span>URL de la Imagen de Portada</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Pega una URL de imagen (https://...)"
+                  value={formImage}
+                  onChange={(e) => setFormImage(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+            </div>
+
+            {/* Perfil de Egreso */}
+            <div className="space-y-1">
+              <label className="font-bold text-gray-900 dark:text-white">Perfil de Egreso / ¿Qué aprenderá el alumno?</label>
+              <textarea
+                placeholder="Describe las competencias profesionales obtenidas al finalizar el curso..."
+                value={formProfile}
+                onChange={(e) => setFormProfile(e.target.value)}
+                rows="3"
+                required
+                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+              />
+            </div>
+
+            {/* Temario (Syllabus) Builder */}
+            <SyllabusEditor
+              formSchedules={formSyllabus}
+              formSyllabus={formSyllabus}
+              onAddModule={handleAddSyllabusField}
+              onRemoveModule={handleRemoveSyllabusField}
+              onChangeModule={handleSyllabusChange}
+            />
+
           </div>
 
-          {/* Temario (Syllabus) Builder */}
-          <SyllabusEditor
-            formSchedules={formSyllabus}
-            formSyllabus={formSyllabus}
-            onAddModule={handleAddSyllabusField}
-            onRemoveModule={handleRemoveSyllabusField}
-            onChangeModule={handleSyllabusChange}
-          />
-
-          {/* Modal Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          {/* Modal Footer Actions - Fixed Always Visible */}
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/95 backdrop-blur-sm shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-200 transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
             >
               Cancelar
             </button>
@@ -245,7 +250,7 @@ export function CourseModal({
             <button
               type="submit"
               disabled={savingCourse}
-              className="px-7 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-red-900/30 hover:shadow-red-900/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex items-center gap-2"
+              className="px-7 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-red-900/30 hover:shadow-red-900/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {savingCourse ? (
                 <>

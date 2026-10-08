@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { PreRegisterForm } from './PreRegisterForm';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 
 export function CourseDetailTabs({
   activeTab,
@@ -16,12 +17,25 @@ export function CourseDetailTabs({
   submittingReg,
   handleRegisterSubmit
 }) {
+  const { config } = useSiteConfig();
   const [copiedBank, setCopiedBank] = useState(false);
+  const [copiedClabe, setCopiedClabe] = useState(false);
 
-  const handleCopyAccount = () => {
-    navigator.clipboard.writeText('1056897860');
+  const bankName = config?.bankName || 'BANORTE';
+  const bankAccount = config?.bankAccountNumber || '1056897860';
+  const bankHolder = config?.bankAccountHolder || 'CECATI 122';
+  const bankClabe = config?.bankClabe || '';
+
+  const handleCopyAccount = (textToCopy = bankAccount) => {
+    navigator.clipboard.writeText(textToCopy);
     setCopiedBank(true);
     setTimeout(() => setCopiedBank(false), 2500);
+  };
+
+  const handleCopyClabe = (textToCopy = bankClabe) => {
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedClabe(true);
+    setTimeout(() => setCopiedClabe(false), 2500);
   };
 
   const tabs = [
@@ -155,7 +169,7 @@ export function CourseDetailTabs({
                   { title: 'Comprobante de estudios', icon: 'ri-article-line' },
                   { title: 'Comprobante de domicilio', icon: 'ri-home-4-line' },
                   { title: '2 Fotografías tamaño infantil a color', icon: 'ri-image-line' },
-                  { title: 'Comprobante de pago BANORTE', icon: 'ri-ticket-2-line' },
+                  { title: `Comprobante de pago (${bankName})`, icon: 'ri-ticket-2-line' },
                 ].map((req, idx) => (
                   <li key={idx} className="flex items-center gap-2.5 p-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-2xs">
                     <i className={`${req.icon} text-cecati dark:text-red-400 text-lg shrink-0`}></i>
@@ -165,32 +179,54 @@ export function CourseDetailTabs({
               </ul>
             </div>
 
-            {/* BANORTE CARD */}
+            {/* CARD DINÁMICA DE CUENTA BANCARIA */}
             <div className="p-5 rounded-3xl bg-gradient-to-br from-red-600 to-rose-700 text-white shadow-xl space-y-3">
               <div className="flex justify-between items-start">
                 <div>
                   <span className="text-xs uppercase font-extrabold tracking-widest text-red-200 block">Depósito Bancario</span>
-                  <h5 className="text-xl font-black">BANORTE</h5>
+                  <h5 className="text-xl font-black">{bankName}</h5>
                 </div>
                 <i className="ri-bank-line text-3xl text-red-200"></i>
               </div>
 
-              <div className="p-3 bg-black/20 backdrop-blur-md rounded-2xl flex items-center justify-between border border-white/20">
-                <div>
-                  <span className="text-[10px] text-red-100 uppercase tracking-wider block font-bold">Número de Cuenta BANORTE</span>
-                  <strong className="text-2xl font-mono tracking-wider font-extrabold text-white">1056897860</strong>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3 bg-black/20 backdrop-blur-md rounded-2xl flex items-center justify-between border border-white/20">
+                  <div>
+                    <span className="text-[10px] text-red-100 uppercase tracking-wider block font-bold">Número de Cuenta {bankName}</span>
+                    <strong className="text-xl font-mono tracking-wider font-extrabold text-white">{bankAccount}</strong>
+                  </div>
+                  <button
+                    onClick={() => handleCopyAccount(bankAccount)}
+                    className="px-3 py-2 rounded-xl bg-white text-rose-700 font-extrabold text-xs shadow-md hover:bg-rose-50 transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <i className={copiedBank ? "ri-check-line text-emerald-600" : "ri-file-copy-line"}></i>
+                    <span>{copiedBank ? "¡Copiado!" : "Copiar"}</span>
+                  </button>
                 </div>
-                <button
-                  onClick={handleCopyAccount}
-                  className="px-3 py-2 rounded-xl bg-white text-rose-700 font-extrabold text-xs shadow-md hover:bg-rose-50 transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <i className={copiedBank ? "ri-check-line text-emerald-600" : "ri-file-copy-line"}></i>
-                  <span>{copiedBank ? "¡Copiado!" : "Copiar"}</span>
-                </button>
+
+                {bankClabe && (
+                  <div className="p-3 bg-black/20 backdrop-blur-md rounded-2xl flex items-center justify-between border border-white/20">
+                    <div>
+                      <span className="text-[10px] text-red-100 uppercase tracking-wider block font-bold">CLABE Interbancaria (SPEI)</span>
+                      <strong className="text-base font-mono tracking-wider font-extrabold text-white">{bankClabe}</strong>
+                    </div>
+                    <button
+                      onClick={() => handleCopyClabe(bankClabe)}
+                      className="px-3 py-2 rounded-xl bg-white text-rose-700 font-extrabold text-xs shadow-md hover:bg-rose-50 transition-all flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <i className={copiedClabe ? "ri-check-line text-emerald-600" : "ri-file-copy-line"}></i>
+                      <span>{copiedClabe ? "¡Copiado!" : "Copiar"}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-red-100 pt-1">
+                <span>Beneficiario: <strong>{bankHolder}</strong></span>
               </div>
 
               <p className="text-xs text-red-100 font-medium">
-                * Realiza tu depósito por esta cantidad exacta en cualquier sucursal BANORTE o transferencia y entrega el ticket original junto con tus copias.
+                * Realiza tu depósito por esta cantidad exacta en cualquier sucursal {bankName} o transferencia electrónica y entrega el ticket original junto con tus copias.
               </p>
             </div>
           </div>
@@ -207,33 +243,51 @@ export function CourseDetailTabs({
               <span className="text-xs bg-emerald-600 text-white px-3 py-1 rounded-full font-bold">Sin mensualidades</span>
             </div>
 
-            {/* BANORTE DEPOSIT INFO */}
-            <div className="p-5 rounded-3xl bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-600 space-y-3">
+            {/* BANCO DEPOSIT INFO DINÁMICO */}
+            <div className="p-5 rounded-3xl bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-600 space-y-4">
               <div className="flex items-center gap-2">
-                <i className="ri-bank-card-fill text-2xl text-red-600 dark:text-red-400"></i>
+                <i className="ri-bank-card-fill text-2xl text-cecati dark:text-red-400"></i>
                 <div>
                   <h5 className="font-extrabold text-gray-900 dark:text-white text-sm">Cuenta de Depósito Oficial</h5>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Banco BANORTE - CECATI 122</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Banco {bankName} • {bankHolder}</p>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-600 flex items-center justify-between">
-                <div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 block font-semibold">Número de Cuenta BANORTE:</span>
-                  <strong className="text-xl font-mono font-extrabold text-gray-900 dark:text-white">1056897860</strong>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="p-3.5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-600 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 block font-semibold">Número de Cuenta {bankName}:</span>
+                    <strong className="text-lg sm:text-xl font-mono font-extrabold text-gray-900 dark:text-white">{bankAccount}</strong>
+                  </div>
+                  <button
+                    onClick={() => handleCopyAccount(bankAccount)}
+                    className="px-3.5 py-2 rounded-xl bg-cecati hover:bg-cecati-hover text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <i className={copiedBank ? "ri-check-line text-emerald-300" : "ri-file-copy-line"}></i>
+                    <span>{copiedBank ? "¡Copiado!" : "Copiar"}</span>
+                  </button>
                 </div>
-                <button
-                  onClick={handleCopyAccount}
-                  className="px-3.5 py-2 rounded-xl bg-cecati hover:bg-cecati-hover text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <i className={copiedBank ? "ri-check-line text-emerald-300" : "ri-file-copy-line"}></i>
-                  <span>{copiedBank ? "¡Copiado!" : "Copiar Cuenta"}</span>
-                </button>
+
+                {bankClabe && (
+                  <div className="p-3.5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-600 flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 block font-semibold">CLABE Interbancaria (SPEI):</span>
+                      <strong className="text-base sm:text-lg font-mono font-extrabold text-gray-900 dark:text-white">{bankClabe}</strong>
+                    </div>
+                    <button
+                      onClick={() => handleCopyClabe(bankClabe)}
+                      className="px-3.5 py-2 rounded-xl bg-gray-800 dark:bg-gray-600 hover:bg-gray-900 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                    >
+                      <i className={copiedClabe ? "ri-check-line text-emerald-300" : "ri-file-copy-line"}></i>
+                      <span>{copiedClabe ? "¡Copiado!" : "Copiar"}</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
-                <p><strong>Nota importante:</strong></p>
-                <p>Presenta tu comprobante impreso de depósito junto con tus documentos (Acta, CURP, Comprobante de estudios, Comprobante de domicilio y 2 fotos infantil a color).</p>
+              <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1 pt-1 border-t border-gray-200/60 dark:border-gray-600/60">
+                <p><strong>Nota importante para tu inscripción:</strong></p>
+                <p>Realiza tu depósito o transferencia bancaria y presenta tu comprobante impreso junto con tus documentos (Acta de Nacimiento, CURP, Comprobante de estudios, Comprobante de domicilio y 2 fotos tamaño infantil).</p>
               </div>
             </div>
           </div>

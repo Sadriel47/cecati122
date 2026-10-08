@@ -11,6 +11,11 @@ export const DEFAULT_SITE_CONFIG = {
   tiktok: 'https://www.tiktok.com/search?q=cecati%20122',
   address: 'Av. Venustiano Carranza 22, Tequisquiapan, Qro.',
   schedule: 'Lun - Vie: 7:00 am - 9:00 pm | Sáb: 7:00 am - 1:00 pm',
+  // Información Bancaria para Pagos de Cursos
+  bankName: 'BANORTE',
+  bankAccountHolder: 'CECATI 122',
+  bankAccountNumber: '1056897860',
+  bankClabe: '',
 };
 
 const SETTINGS_COLLECTION = 'settings';
@@ -85,15 +90,20 @@ export async function getSiteConfig() {
  */
 export async function saveSiteConfig(newConfig) {
   const payload = {
-    whatsapp: newConfig.whatsapp || DEFAULT_SITE_CONFIG.whatsapp,
-    facebook: newConfig.facebook || DEFAULT_SITE_CONFIG.facebook,
-    phone: newConfig.phone || DEFAULT_SITE_CONFIG.phone,
-    email: newConfig.email || DEFAULT_SITE_CONFIG.email,
-    instagram: newConfig.instagram || DEFAULT_SITE_CONFIG.instagram,
-    youtube: newConfig.youtube || DEFAULT_SITE_CONFIG.youtube,
-    tiktok: newConfig.tiktok || DEFAULT_SITE_CONFIG.tiktok,
-    address: newConfig.address || DEFAULT_SITE_CONFIG.address,
-    schedule: newConfig.schedule || DEFAULT_SITE_CONFIG.schedule,
+    whatsapp: newConfig.whatsapp !== undefined ? newConfig.whatsapp : DEFAULT_SITE_CONFIG.whatsapp,
+    facebook: newConfig.facebook !== undefined ? newConfig.facebook : DEFAULT_SITE_CONFIG.facebook,
+    phone: newConfig.phone !== undefined ? newConfig.phone : DEFAULT_SITE_CONFIG.phone,
+    email: newConfig.email !== undefined ? newConfig.email : DEFAULT_SITE_CONFIG.email,
+    instagram: newConfig.instagram !== undefined ? newConfig.instagram : DEFAULT_SITE_CONFIG.instagram,
+    youtube: newConfig.youtube !== undefined ? newConfig.youtube : DEFAULT_SITE_CONFIG.youtube,
+    tiktok: newConfig.tiktok !== undefined ? newConfig.tiktok : DEFAULT_SITE_CONFIG.tiktok,
+    address: newConfig.address !== undefined ? newConfig.address : DEFAULT_SITE_CONFIG.address,
+    schedule: newConfig.schedule !== undefined ? newConfig.schedule : DEFAULT_SITE_CONFIG.schedule,
+    // Campos Bancarios
+    bankName: newConfig.bankName !== undefined ? newConfig.bankName : DEFAULT_SITE_CONFIG.bankName,
+    bankAccountHolder: newConfig.bankAccountHolder !== undefined ? newConfig.bankAccountHolder : DEFAULT_SITE_CONFIG.bankAccountHolder,
+    bankAccountNumber: newConfig.bankAccountNumber !== undefined ? newConfig.bankAccountNumber : DEFAULT_SITE_CONFIG.bankAccountNumber,
+    bankClabe: newConfig.bankClabe !== undefined ? newConfig.bankClabe : DEFAULT_SITE_CONFIG.bankClabe,
     updatedAt: serverTimestamp(),
   };
 
@@ -110,3 +120,4 @@ export async function saveSiteConfig(newConfig) {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
   return payload;
 }
+

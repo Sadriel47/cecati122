@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { RegistrationSuccessState } from './RegistrationSuccessState';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 
 export function PreRegisterForm({
   selectedCourse,
@@ -14,7 +15,12 @@ export function PreRegisterForm({
   submittingReg,
   handleRegisterSubmit
 }) {
+  const { config } = useSiteConfig();
   const containerRef = useRef(null);
+
+  const bankName = config?.bankName || 'BANORTE';
+  const bankAccount = config?.bankAccountNumber || '1056897860';
+  const bankClabe = config?.bankClabe || '';
 
   useEffect(() => {
     if (containerRef.current) {
@@ -103,14 +109,14 @@ export function PreRegisterForm({
             </div>
           </div>
 
-          {/* Recordatorio de depósito BANORTE */}
-          <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs space-y-1 text-amber-900 dark:text-amber-200">
+          {/* Recordatorio de depósito Bancario Dinámico */}
+          <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs space-y-1.5 text-amber-900 dark:text-amber-200">
             <div className="flex items-center gap-1.5 font-extrabold text-amber-800 dark:text-amber-300">
               <i className="ri-information-line text-base"></i>
-              <span>Recordatorio de Inscripción:</span>
+              <span>Recordatorio de Inscripción Oficial:</span>
             </div>
             <p className="text-[11px] leading-relaxed">
-              Presenta tus copias (Acta, CURP, Comprobante de estudios, Domicilio, 2 fotos infantil) y comprobante de pago en BANORTE (Cuenta: <strong>1056897860</strong>).
+              Presenta tus copias (Acta, CURP, Comprobante de estudios, Domicilio, 2 fotos infantil) y comprobante de pago en <strong>{bankName}</strong> (Cuenta: <strong>{bankAccount}</strong>{bankClabe ? ` | CLABE: ${bankClabe}` : ''}).
             </p>
           </div>
 

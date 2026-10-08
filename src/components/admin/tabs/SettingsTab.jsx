@@ -15,6 +15,11 @@ export function SettingsTab({ showToast }) {
     tiktok: '',
     address: '',
     schedule: '',
+    // Datos Bancarios
+    bankName: '',
+    bankAccountHolder: '',
+    bankAccountNumber: '',
+    bankClabe: '',
   });
 
   const [saving, setSaving] = useState(false);
@@ -31,12 +36,22 @@ export function SettingsTab({ showToast }) {
         tiktok: config.tiktok || '',
         address: config.address || '',
         schedule: config.schedule || '',
+        bankName: config.bankName || 'BANORTE',
+        bankAccountHolder: config.bankAccountHolder || 'CECATI 122',
+        bankAccountNumber: config.bankAccountNumber || '1056897860',
+        bankClabe: config.bankClabe || '',
       });
     }
   }, [config]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Si es CLABE, podemos filtrar solo dígitos hasta 18 caracteres
+    if (name === 'bankClabe') {
+      const sanitized = value.replace(/\D/g, '').slice(0, 18);
+      setFormData((prev) => ({ ...prev, [name]: sanitized }));
+      return;
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -45,7 +60,7 @@ export function SettingsTab({ showToast }) {
     setSaving(true);
     try {
       await updateConfig(formData);
-      if (showToast) showToast(' Configuración de enlaces y contactos guardada exitosamente');
+      if (showToast) showToast(' Configuración y datos bancarios guardados exitosamente');
     } catch (err) {
       console.error('Error al guardar la configuración:', err);
       if (showToast) showToast(' Error al guardar los cambios en la base de datos', 'error');
@@ -63,13 +78,13 @@ export function SettingsTab({ showToast }) {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/60 text-cecati dark:text-red-400 text-xs font-bold mb-2">
             <i className="ri-settings-4-line text-sm"></i>
-            <span>Gestión del Sitio</span>
+            <span>Gestión del Sitio y Pagos</span>
           </div>
           <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-            Configuración de Contacto y Enlaces Sociales
+            Configuración de Contacto, Redes y Cuenta Bancaria
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Actualiza el número de WhatsApp, la página de Facebook y los canales de comunicación de todo el sitio web en tiempo real.
+            Administra los canales de comunicación, redes sociales y los datos de depósito bancario para inscripciones de alumnos en tiempo real.
           </p>
         </div>
 
@@ -93,6 +108,156 @@ export function SettingsTab({ showToast }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        {/* NUEVA SECCIÓN: Información de Cuenta Bancaria para Pagos */}
+        <div className="p-6 rounded-3xl bg-gradient-to-br from-red-50/70 via-rose-50/40 to-white dark:from-red-950/30 dark:via-gray-800 dark:to-gray-800 border-2 border-red-200/80 dark:border-red-900/50 space-y-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-red-100 dark:border-red-900/40">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-cecati text-white flex items-center justify-center text-2xl font-bold shadow-lg shadow-red-900/20">
+                <i className="ri-bank-card-fill"></i>
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-gray-900 dark:text-white">
+                  Información de Cuenta Bancaria para Pagos
+                </h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Estos datos se mostrarán en la ficha de inscripción, pestaña de pagos y recordatorios de depósito de todos los cursos.
+                </p>
+              </div>
+            </div>
+            <span className="self-start sm:self-center px-3 py-1 rounded-full text-xs font-bold bg-cecati/10 text-cecati dark:text-red-300">
+              Pago Oficial CECATI 122
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Banco */}
+            <div>
+              <label className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">
+                Institución Bancaria / Banco <span className="text-cecati">*</span>
+              </label>
+              <div className="relative">
+                <i className="ri-bank-line absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
+                <input
+                  type="text"
+                  name="bankName"
+                  required
+                  value={formData.bankName}
+                  onChange={handleChange}
+                  placeholder="Ej: BANORTE, BBVA, Santander, etc."
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+              <span className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 block">
+                Nombre de la institución bancaria donde los alumnos realizarán el depósito o transferencia.
+              </span>
+            </div>
+
+            {/* Titular de la Cuenta */}
+            <div>
+              <label className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">
+                Titular / Beneficiario de la Cuenta <span className="text-cecati">*</span>
+              </label>
+              <div className="relative">
+                <i className="ri-user-star-line absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
+                <input
+                  type="text"
+                  name="bankAccountHolder"
+                  required
+                  value={formData.bankAccountHolder}
+                  onChange={handleChange}
+                  placeholder="Ej: CECATI 122 o Centro de Capacitación..."
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-semibold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+              <span className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 block">
+                Nombre oficial o razón social que debe aparecer como destinatario del pago.
+              </span>
+            </div>
+
+            {/* Número de Cuenta */}
+            <div>
+              <label className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">
+                Número de Cuenta Bancaria <span className="text-cecati">*</span>
+              </label>
+              <div className="relative">
+                <i className="ri-hashtag absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
+                <input
+                  type="text"
+                  name="bankAccountNumber"
+                  required
+                  value={formData.bankAccountNumber}
+                  onChange={handleChange}
+                  placeholder="Ej: 1056897860"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+              <span className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 block">
+                Número de cuenta tradicional para depósitos en ventanilla o cajero automático.
+              </span>
+            </div>
+
+            {/* CLABE Interbancaria */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                  CLABE Interbancaria (Transferencias SPEI)
+                </label>
+                <span className={`text-[11px] font-mono font-bold ${formData.bankClabe.length === 18 ? 'text-emerald-600 dark:text-emerald-400' : formData.bankClabe.length > 0 ? 'text-amber-500' : 'text-gray-400'}`}>
+                  {formData.bankClabe.length}/18 dígitos
+                </span>
+              </div>
+              <div className="relative">
+                <i className="ri-arrow-left-right-line absolute left-3.5 top-3.5 text-gray-400 text-base"></i>
+                <input
+                  type="text"
+                  name="bankClabe"
+                  value={formData.bankClabe}
+                  onChange={handleChange}
+                  maxLength={18}
+                  placeholder="Ej: 072680010568978602 (18 dígitos)"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-mono font-bold text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cecati tracking-wider"
+                />
+              </div>
+              <span className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 block">
+                Clave estandarizada de 18 dígitos para transferencias electrónicas SPEI desde cualquier banco o app móvil.
+              </span>
+            </div>
+          </div>
+
+          {/* Vista previa de cómo lo verán los alumnos */}
+          <div className="p-4 rounded-2xl bg-white dark:bg-gray-800/80 border border-red-200/60 dark:border-gray-700 space-y-2">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-gray-400 block">
+              Vista Previa en el Portal del Alumno:
+            </span>
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-red-900 to-cecati text-white space-y-3 shadow-md">
+              <div className="flex justify-between items-center">
+                <span className="text-xs uppercase font-extrabold tracking-widest text-red-200">
+                  Depósito / Transferencia Bancaria
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-xs uppercase">
+                  {formData.bankName || 'BANCO'}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div className="p-2.5 rounded-xl bg-black/20 backdrop-blur-sm border border-white/10">
+                  <span className="text-[10px] text-red-200 block font-semibold">Número de Cuenta:</span>
+                  <strong className="text-lg font-mono font-black">{formData.bankAccountNumber || '••••••••••'}</strong>
+                </div>
+                {formData.bankClabe && (
+                  <div className="p-2.5 rounded-xl bg-black/20 backdrop-blur-sm border border-white/10">
+                    <span className="text-[10px] text-red-200 block font-semibold">CLABE Interbancaria (SPEI):</span>
+                    <strong className="text-base font-mono font-black">{formData.bankClabe}</strong>
+                  </div>
+                )}
+              </div>
+              <div className="text-[11px] text-red-100 flex items-center gap-1.5 pt-0.5">
+                <i className="ri-shield-check-line"></i>
+                <span>Titular: <strong>{formData.bankAccountHolder || 'CECATI 122'}</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* BLOQUE PRINCIPAL: WhatsApp y Facebook */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* WhatsApp Directo */}
@@ -309,3 +474,4 @@ export function SettingsTab({ showToast }) {
     </div>
   );
 }
+

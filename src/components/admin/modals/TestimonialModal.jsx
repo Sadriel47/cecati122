@@ -43,109 +43,111 @@ export function TestimonialModal({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-6 overflow-y-auto space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-6 overflow-y-auto space-y-4 flex-1 custom-scrollbar">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white text-xs">Nombre Completo del Estudiante</label>
+                <input
+                  type="text"
+                  placeholder="Ej. María Hernández"
+                  value={tStudentName}
+                  onChange={(e) => setTStudentName(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white text-xs">Curso / Estatus (Ej. Egresada de Confección)</label>
+                <input
+                  type="text"
+                  placeholder="Ej. Egresada de Confección / Alumno de Informática"
+                  value={tRoleOrCourse}
+                  onChange={(e) => setTRoleOrCourse(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+
+              <div className="sm:col-span-2 space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white text-xs">Título / Frase Destacada</label>
+                <input
+                  type="text"
+                  placeholder="Ej. 'Abrí mi propio taller de costura' o 'Conseguí empleo formal'"
+                  value={tTitle}
+                  onChange={(e) => setTTitle(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white text-xs">Calificación (Estrellas)</label>
+                <select
+                  value={tRating}
+                  onChange={(e) => setTRating(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                >
+                  <option value={5}>5 Estrellas (Excelente)</option>
+                  <option value={4}>4 Estrellas (Bueno)</option>
+                  <option value={3}>3 Estrellas (Regular)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-gray-900 dark:text-white text-xs">Estado de Publicación</label>
+                <select
+                  value={tStatus}
+                  onChange={(e) => setTStatus(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
+                >
+                  <option value="published">Publicado (Visible en Inicio)</option>
+                  <option value="draft">Borrador (Privado)</option>
+                </select>
+              </div>
+            </div>
+
             <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white text-xs">Nombre Completo del Estudiante</label>
+              <label className="font-bold text-gray-900 dark:text-white text-xs flex items-center gap-1.5">
+                <i className="ri-user-smile-line text-cecati"></i>
+                <span>Foto de Perfil del Alumno (Subir imagen o URL)</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setTAvatarFile(e.target.files[0] || null)}
+                  className="text-xs file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cecati file:text-white hover:file:bg-cecati-hover cursor-pointer"
+                />
+              </div>
               <input
                 type="text"
-                placeholder="Ej. María Hernández"
-                value={tStudentName}
-                onChange={(e) => setTStudentName(e.target.value)}
+                placeholder="O usa ruta local / URL (ej. /assets/img/testimonial-profile-1.png)"
+                value={tAvatar}
+                onChange={(e) => setTAvatar(e.target.value)}
+                className="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-xs mt-1"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-gray-900 dark:text-white text-xs">Testimonio / Opinión Completa</label>
+              <textarea
+                placeholder="Escribe la experiencia del alumno con sus propias palabras..."
+                value={tComment}
+                onChange={(e) => setTComment(e.target.value)}
+                rows="4"
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
               />
             </div>
-
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white text-xs">Curso / Estatus (Ej. Egresada de Confección)</label>
-              <input
-                type="text"
-                placeholder="Ej. Egresada de Confección / Alumno de Informática"
-                value={tRoleOrCourse}
-                onChange={(e) => setTRoleOrCourse(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
-            </div>
-
-            <div className="sm:col-span-2 space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white text-xs">Título / Frase Destacada</label>
-              <input
-                type="text"
-                placeholder="Ej. 'Abrí mi propio taller de costura' o 'Conseguí empleo formal'"
-                value={tTitle}
-                onChange={(e) => setTTitle(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white text-xs">Calificación (Estrellas)</label>
-              <select
-                value={tRating}
-                onChange={(e) => setTRating(Number(e.target.value))}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              >
-                <option value={5}>5 Estrellas (Excelente)</option>
-                <option value={4}>4 Estrellas (Bueno)</option>
-                <option value={3}>3 Estrellas (Regular)</option>
-              </select>
-            </div>
-
-            <div className="space-y-1">
-              <label className="font-bold text-gray-900 dark:text-white text-xs">Estado de Publicación</label>
-              <select
-                value={tStatus}
-                onChange={(e) => setTStatus(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-              >
-                <option value="published">Publicado (Visible en Inicio)</option>
-                <option value="draft">Borrador (Privado)</option>
-              </select>
-            </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="font-bold text-gray-900 dark:text-white text-xs flex items-center gap-1.5">
-              <i className="ri-user-smile-line text-cecati"></i>
-              <span>Foto de Perfil del Alumno (Subir imagen o URL)</span>
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setTAvatarFile(e.target.files[0] || null)}
-                className="text-xs file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-cecati file:text-white hover:file:bg-cecati-hover cursor-pointer"
-              />
-            </div>
-            <input
-              type="text"
-              placeholder="O usa ruta local / URL (ej. /assets/img/testimonial-profile-1.png)"
-              value={tAvatar}
-              onChange={(e) => setTAvatar(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-xs mt-1"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="font-bold text-gray-900 dark:text-white text-xs">Testimonio / Opinión Completa</label>
-            <textarea
-              placeholder="Escribe la experiencia del alumno con sus propias palabras..."
-              value={tComment}
-              onChange={(e) => setTComment(e.target.value)}
-              rows="4"
-              required
-              className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-cecati"
-            />
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/95 backdrop-blur-sm shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-200 transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold text-xs hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
             >
               Cancelar
             </button>
@@ -153,7 +155,7 @@ export function TestimonialModal({
             <button
               type="submit"
               disabled={savingTestimonial}
-              className="px-7 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-red-900/30 hover:shadow-red-900/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex items-center gap-2"
+              className="px-7 py-2.5 rounded-full bg-cecati hover:bg-cecati-hover text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-red-900/30 hover:shadow-red-900/50 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {savingTestimonial ? (
                 <>

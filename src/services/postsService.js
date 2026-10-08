@@ -70,24 +70,26 @@ export async function deletePostImage(storagePathOrUrl) {
 export async function getPosts(category = 'todas') {
   try {
     const postsRef = collection(db, POSTS_COLLECTION);
-    let q;
-
-    if (category && category !== 'todas') {
-      q = query(postsRef, where('category', '==', category), where('status', '==', 'published'));
-    } else {
-      q = query(postsRef, where('status', '==', 'published'));
-    }
-
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(postsRef);
     const posts = [];
+    const cat = (category || 'todas').trim().toLowerCase();
+
     querySnapshot.forEach((snap) => {
-      posts.push({ id: snap.id, ...snap.data() });
+      const data = snap.data();
+      // Incluye la noticia si su estado no es explícitamente borrador
+      if (data.status !== 'draft') {
+        if (!cat || cat === 'todas' || cat === 'todos' || (data.category && data.category.toLowerCase() === cat)) {
+          posts.push({ id: snap.id, ...data });
+        }
+      }
     });
 
     posts.sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
-      return new Date(b.publishedAt || b.createdAt) - new Date(a.publishedAt || a.createdAt);
+      const dateA = a.publishedAt || (a.createdAt?.toDate ? a.createdAt.toDate() : a.createdAt) || 0;
+      const dateB = b.publishedAt || (b.createdAt?.toDate ? b.createdAt.toDate() : b.createdAt) || 0;
+      return new Date(dateB) - new Date(dateA);
     });
 
     return posts;

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getCourses, getCourseCount, getTestimonials } from '../services/db';
 import { getPosts } from '../services/postsService';
 import { HeroSection } from '../components/home/HeroSection';
+import { StatsRibbon } from '../components/home/StatsRibbon';
 import { FeaturedCourses } from '../components/home/FeaturedCourses';
 import { CertificationsSection } from '../components/home/CertificationsSection';
 import { TestimonialsSection } from '../components/home/TestimonialsSection';
@@ -11,6 +12,7 @@ import { FacebookCommunitySection } from '../components/home/FacebookCommunitySe
 export default function Home() {
   const [courses, setCourses] = useState([]);
   const [recentPosts, setRecentPosts] = useState([]);
+  const [featuredPosts, setFeaturedPosts] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [totalCount, setTotalCount] = useState(() => {
     const cached = localStorage.getItem('cecati_course_count');
@@ -28,6 +30,10 @@ export default function Home() {
 
         const postsData = await getPosts('Todas');
         setRecentPosts(postsData.slice(0, 3));
+        
+        // Extraer noticias fijadas/destacadas o las más recientes
+        const pinned = postsData.filter((p) => p.pinned);
+        setFeaturedPosts(pinned.length > 0 ? pinned : postsData.slice(0, 2));
 
         const testimonialsData = await getTestimonials();
         setTestimonials(testimonialsData);
@@ -40,7 +46,8 @@ export default function Home() {
 
   return (
     <main className="main overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <HeroSection totalCount={totalCount} />
+      <HeroSection featuredPosts={featuredPosts} />
+      <StatsRibbon totalCount={totalCount} />
       <FeaturedCourses courses={courses} />
       <CertificationsSection />
       <TestimonialsSection testimonials={testimonials} />

@@ -39,6 +39,9 @@ export default function Admin() {
     totalCourses, morningShiftsCount, avgCost, handleSaveCourse, handleDeleteCourse, handleQuickUpdateCourse
   } = useCourses({ showToast, onCourseMutated: fetchStorageInfo });
 
+  // Estado del Modal de Cuotas de Firebase
+  const [isQuotaModalOpen, setIsQuotaModalOpen] = useState(false);
+
   // Estado Local del Modal de Curso
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentCourse, setCurrentCourse] = useState(null);
@@ -203,64 +206,136 @@ export default function Admin() {
         </div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 space-y-6">
         {/* Header Superior */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-gray-700">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Panel de Administración</h1>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-2">
-              <span>Gestiona el catálogo escolar en tiempo real.</span>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${isFirebase ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
-                {isFirebase ? 'Firebase Cloud Active' : 'Local Offline Mode'}
-              </span>
-            </p>
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              Panel de Administración
+            </h1>
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 flex flex-wrap items-center gap-2">
+              <span>CECATI 122 • Gestión en tiempo real</span>
+              <button
+                type="button"
+                onClick={() => setIsQuotaModalOpen(true)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold transition-all cursor-pointer hover:ring-2 hover:ring-offset-1 ${
+                  isFirebase
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 hover:ring-emerald-500'
+                    : 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 hover:ring-amber-500'
+                }`}
+                title="Haz clic para ver almacenamiento y cuotas"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${isFirebase ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
+                <span>{isFirebase ? 'Firebase Cloud' : 'Offline Mode'}</span>
+                <i className="ri-information-line text-[11px] opacity-80"></i>
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button onClick={() => openCourseModal()} className="px-6 py-3 rounded-full bg-cecati hover:bg-cecati-hover text-white font-extrabold text-sm shadow-xl flex items-center gap-2 cursor-pointer">
-              <i className="ri-add-circle-fill text-lg"></i>
-              <span>+ Agregar Nuevo Curso</span>
+          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+            <button
+              onClick={() => openCourseModal()}
+              className="px-5 py-2.5 rounded-xl bg-cecati hover:bg-cecati-hover text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-red-900/20 hover:shadow-red-900/40 transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+            >
+              <i className="ri-add-circle-fill text-base"></i>
+              <span>+ Nuevo Curso</span>
             </button>
-            <button onClick={handleLogout} className="px-4 py-3 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-red-600 hover:text-white text-gray-700 dark:text-gray-300 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer">
+            <button
+              onClick={handleLogout}
+              className="px-3.5 py-2.5 rounded-xl bg-gray-200 dark:bg-gray-700 hover:bg-red-600 hover:text-white text-gray-700 dark:text-gray-300 font-bold text-xs transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+              title="Cerrar sesión"
+            >
               <span>Salir</span>
               <i className="ri-logout-box-r-line"></i>
             </button>
           </div>
         </div>
 
-        {/* KPIs */}
-        <AdminHeaderStats totalCourses={totalCourses} morningShiftsCount={morningShiftsCount} avgCost={avgCost} />
+        {/* 2. OPTIMIZACIÓN DE LA NAVEGACIÓN: Pestañas fijas en la parte superior con badges minimalistas */}
+        <div className="sticky top-20 z-30 bg-gray-50/90 dark:bg-gray-900/90 backdrop-blur-md py-1 -my-1 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+            <button
+              onClick={() => setAdminTab('courses')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                adminTab === 'courses'
+                  ? 'bg-cecati text-white shadow-md shadow-red-900/20'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60'
+              }`}
+            >
+              <i className="ri-book-open-line text-sm"></i>
+              <span>Catálogo de Cursos</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${adminTab === 'courses' ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>
+                {totalCourses}
+              </span>
+            </button>
 
-        {/* Monitor de Cuotas */}
-        <FirebaseQuotaMonitor storageInfo={storageInfo} onRefresh={fetchStorageInfo} />
+            <button
+              onClick={() => setAdminTab('registrations')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                adminTab === 'registrations'
+                  ? 'bg-cecati text-white shadow-md shadow-red-900/20'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60'
+              }`}
+            >
+              <i className="ri-user-add-line text-sm"></i>
+              <span>Solicitudes</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${adminTab === 'registrations' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300'}`}>
+                {registrations.length}
+              </span>
+            </button>
 
-        {/* NAVEGACIÓN DE PESTAÑAS */}
-        <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-3 overflow-x-auto custom-scrollbar">
-          <button onClick={() => setAdminTab('courses')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'courses' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-            <i className="ri-book-open-line"></i>
-            <span>Catálogo de Cursos ({totalCourses})</span>
-          </button>
+            <button
+              onClick={() => setAdminTab('posts')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                adminTab === 'posts'
+                  ? 'bg-cecati text-white shadow-md shadow-red-900/20'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60'
+              }`}
+            >
+              <i className="ri-newspaper-line text-sm"></i>
+              <span>Noticias</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${adminTab === 'posts' ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300'}`}>
+                {posts.length}
+              </span>
+            </button>
 
-          <button onClick={() => setAdminTab('registrations')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'registrations' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-            <i className="ri-user-add-line"></i>
-            <span>Solicitudes de Pre-registro ({registrations.length})</span>
-          </button>
+            <button
+              onClick={() => setAdminTab('testimonials')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                adminTab === 'testimonials'
+                  ? 'bg-cecati text-white shadow-md shadow-red-900/20'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60'
+              }`}
+            >
+              <i className="ri-chat-quote-line text-sm"></i>
+              <span>Testimonios</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${adminTab === 'testimonials' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300'}`}>
+                {testimonials.length}
+              </span>
+            </button>
 
-          <button onClick={() => setAdminTab('posts')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'posts' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-            <i className="ri-newspaper-line"></i>
-            <span>Noticias / Blog ({posts.length})</span>
-          </button>
-
-          <button onClick={() => setAdminTab('testimonials')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'testimonials' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-            <i className="ri-chat-quote-line"></i>
-            <span>Testimonios ({testimonials.length})</span>
-          </button>
-
-          <button onClick={() => setAdminTab('settings')} className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${adminTab === 'settings' ? 'bg-cecati text-white shadow-lg' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-            <i className="ri-settings-4-line"></i>
-            <span>Enlaces y Contacto</span>
-          </button>
+            <button
+              onClick={() => setAdminTab('settings')}
+              className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                adminTab === 'settings'
+                  ? 'bg-cecati text-white shadow-md shadow-red-900/20'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60'
+              }`}
+            >
+              <i className="ri-settings-4-line text-sm"></i>
+              <span>Enlaces y Contacto</span>
+            </button>
+          </div>
         </div>
+
+        {/* 1. BARRA SUPERIOR DE KPIS COMPACTA Y HORIZONTAL */}
+        <AdminHeaderStats
+          totalCourses={totalCourses}
+          morningShiftsCount={morningShiftsCount}
+          avgCost={avgCost}
+          onOpenQuotaModal={() => setIsQuotaModalOpen(true)}
+          storageInfo={storageInfo}
+        />
 
         {/* VISTAS DE PESTAÑAS */}
         {adminTab === 'courses' && (
@@ -311,6 +386,15 @@ export default function Admin() {
         )}
 
       </div>
+
+      {/* MODAL DE MONITOR DE ALMACENAMIENTO Y CUOTAS DE FIREBASE */}
+      <FirebaseQuotaMonitor
+        isOpen={isQuotaModalOpen}
+        onClose={() => setIsQuotaModalOpen(false)}
+        storageInfo={storageInfo}
+        onRefresh={fetchStorageInfo}
+      />
+
 
       {/* MODALES INDEPENDIENTES */}
       <CourseModal
